@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, TrendingUp, TrendingDown, BarChart3, PieChart } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
 import { Investment, InvestmentStats, BetTypeStats } from '@/types/investment';
 import { investmentRepository, StatsCriteria } from '@/services/repositories/InvestmentRepository';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
@@ -462,11 +462,11 @@ export const ProfitLossReport: React.FC<ProfitLossReportProps> = ({ onBack }) =>
                         outerRadius={80}
                         dataKey="totalInvestment"
                         nameKey="betType"
-                        label={({ betType, percent }) => 
+                        label={({ betType, percent }: { betType: string; percent: number }) => 
                           `${getBetTypeLabel(betType)} ${(percent * 100).toFixed(1)}%`
                         }
                       >
-                        {betTypeStats.map((entry, index) => (
+                        {betTypeStats.map((_entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

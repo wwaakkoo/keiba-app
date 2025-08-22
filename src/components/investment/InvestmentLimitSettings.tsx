@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, AlertTriangle, Settings, Save, RotateCcw, Info } from 'lucide-react';
+import { Shield, AlertTriangle, Save, RotateCcw, Info } from 'lucide-react';
 import { InvestmentLimits } from '@/types/investment';
 import { investmentLimitService } from '@/services/investmentLimitService';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';

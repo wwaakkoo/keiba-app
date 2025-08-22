@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Target, Calendar, MapPin, ArrowRight, Plus, AlertCircle } from 'lucide-react';
+import { Target, Calendar, ArrowRight, Plus, AlertCircle } from 'lucide-react';
 import { PredictionResult } from '@/types/prediction';
 import { predictionRepository } from '@/services/repositories/PredictionRepository';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';

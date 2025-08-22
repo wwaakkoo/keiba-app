@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Check, X, ArrowRight } from 'lucide-react';
+import { AlertTriangle, Check, ArrowRight } from 'lucide-react';
 import { DataConflict } from '@/services/syncService';
 
 interface ConflictResolverProps {

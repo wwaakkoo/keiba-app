@@ -11,7 +11,7 @@ export const PWAUpdateNotification: React.FC<PWAUpdateNotificationProps> = ({
 }) => {
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
-  const [updateInfo, setUpdateInfo] = useState<{
+  const [updateInfo] = useState<{
     version?: string;
     features?: string[];
     isRequired?: boolean;

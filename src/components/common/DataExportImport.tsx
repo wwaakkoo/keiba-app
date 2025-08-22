@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { Download, Upload, FileText, Database, Settings, Calendar, CheckCircle, AlertCircle, X } from 'lucide-react';
-import { dataExportService, ExportOptions, ImportResult } from '@/services/dataExportService';
+import { Download, Upload, FileText, Database, Settings, CheckCircle, AlertCircle, X } from 'lucide-react';
+import { DataExportService, ExportOptions, ImportResult } from '@/services/dataExportService';
+
+const dataExportService = new DataExportService();
 
 interface DataExportImportProps {
   onClose?: () => void;
@@ -48,17 +50,17 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
       switch (exportType) {
         case 'predictions':
           blob = await dataExportService.exportPredictionsToCSV(options.dateRange ? { dateRange: options.dateRange } : undefined);
-          filename = dataExportService.constructor.generateFilename('predictions', 'csv');
+          filename = DataExportService.generateFilename('predictions', 'csv');
           break;
           
         case 'investments':
           blob = await dataExportService.exportInvestmentsToCSV(options.dateRange ? { dateRange: options.dateRange } : undefined);
-          filename = dataExportService.constructor.generateFilename('investments', 'csv');
+          filename = DataExportService.generateFilename('investments', 'csv');
           break;
           
         case 'settings':
           blob = await dataExportService.exportSettingsToJSON();
-          filename = dataExportService.constructor.generateFilename('settings', 'json');
+          filename = DataExportService.generateFilename('settings', 'json');
           break;
           
         case 'all':
@@ -67,7 +69,7 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
           options.includeInvestments = true;
           options.includeSettings = true;
           blob = await dataExportService.exportAllData(options);
-          filename = dataExportService.constructor.generateFilename('all-data', exportFormat);
+          filename = DataExportService.generateFilename('all-data', exportFormat);
           break;
           
         default:
@@ -75,7 +77,7 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
       }
 
       // ファイルダウンロード
-      dataExportService.constructor.downloadBlob(blob, filename);
+      DataExportService.downloadBlob(blob, filename);
       setExportStatus('エクスポートが完了しました');
       
     } catch (error) {

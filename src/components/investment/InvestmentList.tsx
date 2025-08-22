@@ -1,5 +1,5 @@
 import React, { useState, memo, useMemo, useCallback } from 'react';
-import { ArrowLeft, Filter, Download, Trash2, Edit, Calendar } from 'lucide-react';
+import { ArrowLeft, Filter, Download, Trash2, Calendar } from 'lucide-react';
 import { Investment } from '@/types/investment';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { investmentRepository } from '@/services/repositories/InvestmentRepository';
