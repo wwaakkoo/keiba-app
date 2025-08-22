@@ -127,9 +127,26 @@ export const useDataManager = () => {
       // 予想データを保存
       const predictionData: Omit<PredictionResult, 'id'> = {
         raceId: savedRace.id,
+        timestamp: new Date(),
+        date: new Date().toISOString().split('T')[0],
+        race: {
+          venue: savedRace.venue,
+          raceNumber: savedRace.raceNumber,
+          distance: savedRace.distance,
+          surface: savedRace.surface,
+          raceDate: savedRace.date
+        },
         predictions: predictions.slice(0, 5), // 上位5頭のみ保存
-        confidence: confidenceLevel || undefined,
-        timestamp: new Date()
+        horseCount: predictions.length,
+        confidenceLevel: confidenceLevel ? {
+          overall: confidenceLevel > 80 ? 'high' : confidenceLevel > 60 ? 'medium' : 'low',
+          topPick: confidenceLevel,
+          spread: 10,
+          dataQuality: 'good'
+        } : null,
+        actualResults: null,
+        payoutData: null,
+        isResultEntered: false
       };
 
       const predictionId = await predictionRepository.save(predictionData);
@@ -159,7 +176,7 @@ export const useDataManager = () => {
 
       // 的中判定（1着予想が当たったかどうか）
       const prediction = await predictionRepository.findById(predictionId);
-      const isCorrect = prediction?.predictions?.[0]?.number === actualRanking[0];
+      const isCorrect = prediction?.predictions?.[0]?.horse?.number === actualRanking[0];
       
       await predictionRepository.updateResult(predictionId, {
         actualRanking,
@@ -173,7 +190,7 @@ export const useDataManager = () => {
           raceId: prediction.raceId,
           predictionId: predictionId,
           betType: 'win', // デフォルトは単勝
-          selections: [prediction.predictions?.[0]?.number || 1],
+          selections: [prediction.predictions?.[0]?.horse?.number || 1],
           amount: payoutData.investment || 0,
           odds: 0, // オッズ情報がない場合は0
           payout: payoutData.totalReturn || 0,
@@ -260,7 +277,7 @@ export const useDataManager = () => {
     const firstPlaceHits = completedPredictions.filter(prediction => {
       const topPrediction = prediction.predictions[0]; // 予想1位
       const firstPlace = prediction.actualResults?.find(result => result.rank === 1);
-      return topPrediction && firstPlace && topPrediction.number === firstPlace.number;
+      return topPrediction && firstPlace && topPrediction.horse.number === firstPlace.number;
     }).length;
     
     // 3着以内的中率計算（予想上位3頭のうち1頭でも3着以内に入れば的中）
@@ -269,7 +286,7 @@ export const useDataManager = () => {
       const top3Actual = prediction.actualResults?.filter(result => result.rank <= 3) || [];
       
       return top3Predictions.some(pred => 
-        top3Actual.some(actual => pred.number === actual.number)
+        top3Actual.some(actual => pred.horse.number === actual.number)
       );
     }).length;
     
@@ -307,7 +324,7 @@ export const useDataManager = () => {
     
     if (completedPredictions.length === 0) return [];
     
-    const trendData = [];
+    const trendData: any[] = [];
     let cumulativeFirstHits = 0;
     let cumulativeTop3Hits = 0;
     
@@ -315,13 +332,13 @@ export const useDataManager = () => {
       // 1着的中チェック
       const topPrediction = prediction.predictions[0];
       const firstPlace = prediction.actualResults?.find(r => r.rank === 1);
-      const isFirstHit = topPrediction && firstPlace && topPrediction.number === firstPlace.number;
+      const isFirstHit = topPrediction && firstPlace && topPrediction.horse.number === firstPlace.number;
       
       // 3着以内的中チェック
       const top3Predictions = prediction.predictions.slice(0, 3);
       const top3Actual = prediction.actualResults?.filter(r => r.rank <= 3) || [];
       const isTop3Hit = top3Predictions.some(pred => 
-        top3Actual.some(actual => pred.number === actual.number)
+        top3Actual.some(actual => pred.horse.number === actual.number)
       );
       
       if (isFirstHit) cumulativeFirstHits++;
@@ -371,7 +388,7 @@ export const useDataManager = () => {
     const firstHits = filteredPredictions.filter(prediction => {
       const topPrediction = prediction.predictions[0];
       const firstPlace = prediction.actualResults?.find(r => r.rank === 1);
-      return topPrediction && firstPlace && topPrediction.number === firstPlace.number;
+      return topPrediction && firstPlace && topPrediction.horse.number === firstPlace.number;
     }).length;
     
     // 3着以内的中計算
@@ -379,7 +396,7 @@ export const useDataManager = () => {
       const top3Predictions = prediction.predictions.slice(0, 3);
       const top3Actual = prediction.actualResults?.filter(r => r.rank <= 3) || [];
       return top3Predictions.some(pred => 
-        top3Actual.some(actual => pred.number === actual.number)
+        top3Actual.some(actual => pred.horse.number === actual.number)
       );
     }).length;
     
@@ -429,13 +446,13 @@ export const useDataManager = () => {
       // 1着的中チェック
       const topPrediction = prediction.predictions[0];
       const firstPlace = prediction.actualResults?.find(r => r.rank === 1);
-      const isFirstHit = topPrediction && firstPlace && topPrediction.number === firstPlace.number;
+      const isFirstHit = topPrediction && firstPlace && topPrediction.horse.number === firstPlace.number;
       
       // 3着以内的中チェック
       const top3Predictions = prediction.predictions.slice(0, 3);
       const top3Actual = prediction.actualResults?.filter(r => r.rank <= 3) || [];
       const isTop3Hit = top3Predictions.some(pred => 
-        top3Actual.some(actual => pred.number === actual.number)
+        top3Actual.some(actual => pred.horse.number === actual.number)
       );
       
       // 距離別
@@ -506,7 +523,7 @@ export const useDataManager = () => {
     
     if (completedPredictions.length === 0) return [];
     
-    const detailedTrends = [];
+    const detailedTrends: any[] = [];
     let cumulativeStats = {
       exactFirstHits: 0,
       totalRankingScore: 0,
