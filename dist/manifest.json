@@ -1,0 +1,36 @@
+{
+  "name": "競馬予想＋投資管理アプリ",
+  "short_name": "競馬予想",
+  "description": "モバイル対応競馬予想・投資管理アプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "lang": "ja",
+  "dir": "ltr",
+  "categories": ["sports", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "新しい予想",
+      "short_name": "予想",
+      "description": "新しいレースの予想を作成",
+      "url": "/?action=new-prediction"
+    },
+    {
+      "name": "統計",
+      "short_name": "統計",
+      "description": "予想成績と統計を確認",
+      "url": "/?action=statistics"
+    }
+  ]
+}

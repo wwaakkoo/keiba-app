@@ -1,0 +1,15 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" rx="24" fill="#2563eb"/>
+  <g transform="translate(96, 96)">
+    <!-- 馬のシルエット -->
+    <path d="M-30 -40 Q-20 -50 -10 -45 Q0 -42 5 -35 Q7 -25 5 -15 Q2 -10 -5 -12 Q-15 -15 -22 -20 Q-27 -30 -30 -40 Z" fill="white"/>
+    <ellipse cx="0" cy="10" rx="40" ry="20" fill="white"/>
+    <rect x="-25" y="25" width="4" height="30" fill="white"/>
+    <rect x="-15" y="25" width="4" height="32" fill="white"/>
+    <rect x="10" y="25" width="4" height="30" fill="white"/>
+    <rect x="20" y="25" width="4" height="32" fill="white"/>
+    <!-- 数字 -->
+    <circle cx="35" cy="-25" r="12" fill="white"/>
+    <text x="35" y="-20" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#2563eb">1</text>
+  </g>
+</svg>
