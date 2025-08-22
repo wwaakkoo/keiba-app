@@ -264,8 +264,10 @@ export class InvestmentRepositoryImpl implements InvestmentRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const deleteCount = await db.investments.delete(id);
-      if (deleteCount === 0) {
+      await db.investments.delete(id);
+      // 削除の確認
+      const exists = await db.investments.get(id);
+      if (exists) {
         throw new Error('削除対象の投資記録が見つかりません');
       }
     } catch (error) {

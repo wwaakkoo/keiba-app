@@ -1,5 +1,5 @@
 import { db } from '../database';
-import { PredictionResult, HorseAnalysis } from '@/types/prediction';
+import { PredictionResult } from '@/types/prediction';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface PredictionRepository {
@@ -103,8 +103,10 @@ export class PredictionRepositoryImpl implements PredictionRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const deleteCount = await db.predictions.delete(id);
-      if (deleteCount === 0) {
+      await db.predictions.delete(id);
+      // 削除の確認
+      const exists = await db.predictions.get(id);
+      if (exists) {
         throw new Error('削除対象の予想が見つかりません');
       }
     } catch (error) {

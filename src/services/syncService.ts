@@ -251,7 +251,7 @@ export class SyncService {
   }
 
   // 自動同期の開始
-  private autoSyncTimer: NodeJS.Timeout | null = null;
+  private autoSyncTimer: number | null = null;
 
   private startAutoSync(): void {
     if (this.autoSyncTimer) {
@@ -337,7 +337,7 @@ export class SyncService {
     };
   }
 
-  private async detectConflicts(remoteData: any): Promise<DataConflict[]> {
+  private async detectConflicts(_remoteData: any): Promise<DataConflict[]> {
     const conflicts: DataConflict[] = [];
     
     // 実際の実装では、ローカルデータとリモートデータを比較して競合を検出

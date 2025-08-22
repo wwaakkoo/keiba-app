@@ -3,7 +3,7 @@
  * 重い予想計算処理をメインスレッドから分離
  */
 
-import { Horse, PastRace } from '../types/race';
+import { Horse } from '../types/race';
 import { PredictionWeights } from '../types/prediction';
 
 interface PredictionWorkerMessage {
@@ -85,7 +85,7 @@ function calculateHorseScore(
 
 // 複数馬の予想計算
 function calculatePredictions(horses: Horse[], weights: PredictionWeights) {
-  const predictions = horses.map((horse, index) => {
+  const predictions = horses.map((horse) => {
     const scoreResult = calculateHorseScore(horse, weights);
     
     // デバッグログ
@@ -155,7 +155,7 @@ function getRecommendation(score: number): 'strong' | 'moderate' | 'weak' | 'avo
 }
 
 // 馬の分析
-function analyzeHorse(horse: Horse, score: number) {
+function analyzeHorse(horse: Horse, _score: number) {
   const analysis = {
     strengths: [] as string[],
     weaknesses: [] as string[],

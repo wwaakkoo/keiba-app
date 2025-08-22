@@ -93,8 +93,10 @@ export class RaceRepositoryImpl implements RaceRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      const deleteCount = await db.races.delete(id);
-      if (deleteCount === 0) {
+      await db.races.delete(id);
+      // 削除の確認
+      const exists = await db.races.get(id);
+      if (exists) {
         throw new Error('削除対象のレースが見つかりません');
       }
     } catch (error) {
