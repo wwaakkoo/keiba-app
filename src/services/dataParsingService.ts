@@ -239,41 +239,136 @@ export const parseNetKeibaData = (text: string, addDebugLog?: (message: string, 
           parseWarnings.push(warning);
         }
         
-        // 4. 騎手の抽出（改良版：斤量の直前行を検索）
+        // 4. 騎手の抽出（改良版：複数パターンで検索）
         let jockey = '';
         
         log(`騎手抽出開始`);
         
-        // 斤量パターン（xx.x形式）を探してその直前行を騎手とする
+        // パターン1: 斤量の直前行を検索
         for (let i = 1; i < lines.length; i++) {
           const currentLine = lines[i].trim();
           
           // 斤量パターン（52.0のような数字.数字形式）
           if (currentLine.match(/^\d+\.?\d*$/) && parseFloat(currentLine) >= 48 && parseFloat(currentLine) <= 60) {
+            log(`  斤量候補発見 行${i}: "${currentLine}"`);
             // 前の行が騎手候補
             if (i > 0) {
               const prevLine = lines[i - 1].trim();
+              log(`  前の行チェック 行${i-1}: "${prevLine}"`);
               
               // 騎手らしい条件：ひらがな・カタカナ・漢字で2-8文字（より広範囲の漢字を含む）
-              if (prevLine.length >= 2 && prevLine.length <= 8 &&
-                  prevLine.match(/^[ぁ-んァ-ヶー一-龯々\s]+$/) &&
-                  !prevLine.includes('人気') &&
-                  !prevLine.includes('着') &&
-                  !prevLine.includes('頭') &&
-                  !prevLine.includes('休養') &&
-                  !prevLine.includes('kg') &&
-                  !prevLine.includes('牝') &&
-                  !prevLine.includes('牡') &&
-                  !prevLine.includes('美浦') &&
-                  !prevLine.includes('栗東') &&
-                  !prevLine.includes('歳') &&
-                  !prevLine.match(/^\d/)) {
-                
+              const lengthCheck = prevLine.length >= 2 && prevLine.length <= 8;
+              const regexCheck = prevLine.match(/^[ぁ-んァ-ヶー一-鿿々\s]+$/);
+              const excludeChecks = [
+                !prevLine.includes('人気'),
+                !prevLine.includes('着'),
+                // 「頭」は騎手名「鷲頭」などで使用されるため除外条件から削除
+                // !prevLine.includes('頭'),
+                !prevLine.includes('休養'),
+                !prevLine.includes('kg'),
+                !prevLine.includes('牝'),
+                !prevLine.includes('牡'),
+                !prevLine.includes('美浦'),
+                !prevLine.includes('栗東'),
+                !prevLine.includes('歳'),
+                !prevLine.match(/^\d/)
+              ];
+              
+              log(`    長さチェック: ${lengthCheck} (長さ: ${prevLine.length})`);
+              log(`    正規表現チェック: ${!!regexCheck}`);
+              log(`    除外チェック: ${excludeChecks.every(Boolean)}`);
+              
+              if (lengthCheck && regexCheck && excludeChecks.every(Boolean)) {
                 jockey = prevLine;
                 log(`✅ 騎手発見（斤量前）行${i-1}: "${jockey}" (斤量: ${currentLine})`);
                 break;
+              } else {
+                log(`  ❌ 前の行が騎手条件に合致せず: "${prevLine}"`);
               }
             }
+          }
+          
+          // パターン1.5: 斤量と騎手名が同じ行にタブ区切りで含まれる場合
+          const tabSeparatedMatch = currentLine.match(/^(.+)\t(\d+\.?\d*)\t?$/);
+          if (tabSeparatedMatch) {
+            const jockeyCandidate = tabSeparatedMatch[1].trim();
+            const weightCandidate = parseFloat(tabSeparatedMatch[2]);
+            
+            // 斤量の範囲チェック
+            if (weightCandidate >= 48 && weightCandidate <= 60) {
+              // 騎手名の条件チェック
+              if (jockeyCandidate.length >= 2 && jockeyCandidate.length <= 8 &&
+                  jockeyCandidate.match(/^[ぁ-んァ-ヶー一-鿿々\s]+$/) &&
+                  !jockeyCandidate.includes('人気') &&
+                  !jockeyCandidate.includes('着') &&
+                  // 「頭」は騎手名「鷲頭」などで使用されるため除外条件から削除
+                  // !jockeyCandidate.includes('頭') &&
+                  !jockeyCandidate.includes('休養') &&
+                  !jockeyCandidate.includes('kg') &&
+                  !jockeyCandidate.includes('牝') &&
+                  !jockeyCandidate.includes('牡') &&
+                  !jockeyCandidate.includes('美浦') &&
+                  !jockeyCandidate.includes('栗東') &&
+                  !jockeyCandidate.includes('歳') &&
+                  !jockeyCandidate.match(/^\d/)) {
+                
+                jockey = jockeyCandidate;
+                log(`✅ 騎手発見（同一行タブ区切り）行${i}: "${jockey}" (斤量: ${weightCandidate})`);
+                break;
+              }
+            }
+          }
+        }
+        
+        // パターン2: 騎手名が見つからない場合、全行から騎手名候補を検索
+        if (!jockey) {
+          log(`斤量前検索で騎手が見つからず、全行検索を実行`);
+          
+          // 有名騎手名のリストで直接検索
+          const allJockeys = [
+            'ルメール', 'クリストフ', '川田', '武豊', '戸崎', '横山武', '横山和', 
+            '松山', '坂井', '池添', '岩田康', '岩田望', '藤岡', '田辺', '三浦', 
+            '和田', '幸', '菅原', '団野', '西村', '鮫島', '菱田', '津村', '大野', 
+            '北村', '佐々木', '黛', '鷲頭', '福永', 'デムーロ', '内田博', '木幡',
+            '石神', '石橋', '丸田', '柴田', '武士沢', '江田', '勝浦', '丸山', 
+            '蛯名', '吉田隼', '吉田豊', '野中', '木幡育', '木幡巧', '小野寺', 
+            '宮崎', '原田', '岡田', '太宰', '藤田', '中井', '秋山', '嘉藤', 
+            '森', '古川', '斎藤', '五十嵐', '柴山', '山田', '嶋田', '高倉',
+            '舟山', '川端', '亀田', '吉村'
+          ];
+          
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            log(`  全行検索 行${i}: "${line}"`);
+            
+            // 騎手名候補をチェック
+            for (const jockeyName of allJockeys) {
+              if (line.includes(jockeyName) && line.length <= 10) {
+                log(`  騎手名候補チェック 行${i}: "${line}" (パターン: ${jockeyName})`);
+                // さらに詳細チェック
+                if (!line.includes('人気') && 
+                    !line.includes('着') && 
+                    // 「頭」は騎手名「鷲頭」などで使用されるため除外条件から削除
+                    // !line.includes('頭') &&
+                    !line.includes('kg') &&
+                    !line.includes('美浦') &&
+                    !line.includes('栗東') &&
+                    !line.match(/^\d+\./) &&
+                    !line.includes('勝') &&
+                    !line.includes('年') &&
+                    !line.includes('月') &&
+                    !line.includes('日')) {
+                  
+                  jockey = line;
+                  log(`✅ 騎手発見（全行検索）行${i}: "${jockey}" (パターン: ${jockeyName})`);
+                  break;
+                } else {
+                  log(`  ❌ 詳細チェックで除外: "${line}"`);
+                }
+              }
+            }
+            
+            if (jockey) break;
           }
         }
         
@@ -642,6 +737,31 @@ const extractDebutantInfo = (lines: string[], log: (message: string, data?: any)
             break;
           }
         }
+      }
+    }
+    
+    // 騎手が見つからない場合は全行検索
+    if (!jockeyInfo) {
+      const allJockeys = [
+        'ルメール', 'クリストフ', '川田', '武豊', '戸崎', '横山武', '横山和', 
+        '松山', '坂井', '池添', '岩田康', '岩田望', '藤岡', '田辺', '三浦', 
+        '和田', '幸', '菅原', '団野', '西村', '鮫島', '菱田', '津村', '大野', 
+        '北村', '佐々木', '黛', '鷲頭', '福永', 'デムーロ'
+      ];
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        for (const jockeyName of allJockeys) {
+          if (trimmedLine.includes(jockeyName) && trimmedLine.length <= 10) {
+            if (!trimmedLine.includes('人気') && !trimmedLine.includes('着') && 
+                !trimmedLine.includes('kg') && !trimmedLine.match(/^\d+\./)) {
+              jockeyInfo = trimmedLine;
+              log(`騎手検出（全行検索）: ${jockeyInfo}`);
+              break;
+            }
+          }
+        }
+        if (jockeyInfo) break;
       }
     }
     
