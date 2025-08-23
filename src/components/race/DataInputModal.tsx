@@ -163,7 +163,6 @@ C.ルメール
                   ※ レース条件（競馬場・距離・馬場・条件）は別途手動で設定してください<br/>
                   　 netkeibaデータには各馬の過去成績のみが含まれています
                 </p>
-                </FlexLayout>
                 
                 <textarea
                   value={inputData}
