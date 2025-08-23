@@ -239,7 +239,7 @@ export class DetailedAnalysisService {
     investmentMap: Map<string, Investment[]>
   ): Record<string, any> {
     const venueGroups = predictions.reduce((acc, pred) => {
-      const venue = pred.race.venue;
+      const venue = pred.race.venue || '未設定';
       if (!acc[venue]) acc[venue] = [];
       acc[venue].push(pred);
       return acc;

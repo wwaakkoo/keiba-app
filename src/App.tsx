@@ -199,7 +199,7 @@ function App() {
         timestamp: new Date(),
         date: raceInfo.date || new Date().toISOString().split('T')[0],
         race: {
-          venue: raceInfo.venue,
+          venue: raceInfo.venue || '未設定',
           raceNumber: raceInfo.raceNumber || 1,
           distance: raceInfo.distance || 1600,
           surface: raceInfo.surface || 'turf',

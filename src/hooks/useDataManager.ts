@@ -73,7 +73,7 @@ export const useDataManager = () => {
             id: prediction.id,
             date: prediction.timestamp.toISOString(),
             race: {
-              venue: race?.venue,
+              venue: race?.venue || '未設定',
               raceNumber: race?.raceNumber || 0,
               distance: race?.distance || 0,
               surface: race?.surface || 'turf',
@@ -441,7 +441,7 @@ export const useDataManager = () => {
     completedPredictions.forEach(prediction => {
       const distance = prediction.race.distance.toString();
       const surface = prediction.race.surface;
-      const venue = prediction.race.venue;
+      const venue = prediction.race.venue || '未設定';
       
       // 1着的中チェック
       const topPrediction = prediction.predictions[0];
