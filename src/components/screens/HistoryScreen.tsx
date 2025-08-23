@@ -284,7 +284,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
           </ResponsiveCard>
         ) : (
           <div className="space-y-4">
-            {predictions.map((prediction, index) => {
+            {predictions.map((prediction, _index) => {
               const status = getResultStatus(prediction);
               const topThree = prediction.predictions?.slice(0, 3) || [];
               
@@ -473,7 +473,7 @@ const ResultInputModal: React.FC<ResultInputModalProps> = ({
     }
     
     // 馬番を数字順にソート
-    return numbers.sort((a, b) => a - b);
+    return numbers.sort((a, b) => (a || 0) - (b || 0));
   }, [prediction.predictions]);
 
   return (
@@ -503,7 +503,7 @@ const ResultInputModal: React.FC<ResultInputModalProps> = ({
                     selectedNum === num && idx !== position
                   );
                   return (
-                    <option key={num} value={num} disabled={isDisabled}>
+                    <option key={num} value={num || ''} disabled={isDisabled}>
                       {num}番{isDisabled ? ' (選択済み)' : ''}
                     </option>
                   );

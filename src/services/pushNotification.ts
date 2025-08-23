@@ -173,18 +173,17 @@ class PushNotificationService {
 
       const registration = await navigator.serviceWorker.ready;
       
-      const notificationOptions: NotificationOptions = {
+      const notificationConfig = {
         body: options.body,
         icon: options.icon || '/icons/icon-192.png',
         badge: options.badge || '/icons/badge-72.png',
         tag: options.tag || 'keiba-app',
         data: options.data || {},
-        actions: options.actions || [],
         requireInteraction: options.requireInteraction || false,
         silent: options.silent || false
       };
 
-      await registration.showNotification(options.title, notificationOptions);
+      await registration.showNotification(options.title, notificationConfig);
       console.log('PushNotification: 通知を表示しました:', options.title);
     } catch (error) {
       console.error('PushNotification: 通知表示エラー:', error);
@@ -196,7 +195,7 @@ class PushNotificationService {
    */
   public scheduleNotification(
     delay: number,
-    options: NotificationOptions
+    options: CustomNotificationOptions
   ): number {
     const timeoutId = window.setTimeout(() => {
       this.showNotification(options);

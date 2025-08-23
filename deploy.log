@@ -1,218 +1,120 @@
-[03:03:04.767] Running build in Washington, D.C., USA (East) – iad1
-[03:03:04.767] Build machine configuration: 2 cores, 8 GB
-[03:03:04.787] Cloning github.com/wwaakkoo/keiba-app (Branch: main, Commit: 651ef98)
-[03:03:04.930] Previous build caches not available
-[03:03:05.146] Cloning completed: 359.000ms
-[03:03:05.738] Running "vercel build"
-[03:03:06.152] Vercel CLI 46.0.2
-[03:03:06.933] Installing dependencies...
-[03:03:09.581] npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
-[03:03:09.748] npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
-[03:03:10.464] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-[03:03:10.488] npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-[03:03:11.266] npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
-[03:03:11.439] npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
-[03:03:11.459] npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
-[03:03:13.539] npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-[03:03:14.410] 
-[03:03:14.411] added 600 packages in 7s
-[03:03:14.412] 
-[03:03:14.412] 156 packages are looking for funding
-[03:03:14.412]   run `npm fund` for details
-[03:03:14.464] Running "npm run build"
-[03:03:14.574] 
-[03:03:14.575] > keiba-mobile-app@0.1.0 build
-[03:03:14.575] > tsc && vite build
-[03:03:14.575] 
-[03:03:22.567] src/components/investment/ProfitLossReport.tsx(466,46): error TS2345: Argument of type 'string' is not assignable to parameter of type '"win" | "place" | "exacta" | "quinella" | "trifecta" | "trio" | "tierce"'.
-[03:03:22.568] src/components/prediction/PredictionEngine.tsx(90,56): error TS2345: Argument of type '{ name: string; number: number; jockey: string; popularity: number; odds: number | null; pastRaces: { rank: number; distance: number; time: number; surface: "turf" | "dirt"; condition: string; }[]; }[]' is not assignable to parameter of type 'Horse[]'.
-[03:03:22.569]   Type '{ name: string; number: number; jockey: string; popularity: number; odds: number | null; pastRaces: { rank: number; distance: number; time: number; surface: "turf" | "dirt"; condition: string; }[]; }' is not assignable to type 'Horse'.
-[03:03:22.569]     Types of property 'pastRaces' are incompatible.
-[03:03:22.570]       Type '{ rank: number; distance: number; time: number; surface: "turf" | "dirt"; condition: string; }[]' is not assignable to type 'PastRace[]'.
-[03:03:22.570]         Type '{ rank: number; distance: number; time: number; surface: "turf" | "dirt"; condition: string; }' is not assignable to type 'PastRace'.
-[03:03:22.570]           Types of property 'condition' are incompatible.
-[03:03:22.571]             Type 'string' is not assignable to type '"good" | "slightly_heavy" | "heavy" | "bad"'.
-[03:03:22.571] src/components/prediction/PredictionEngine.tsx(172,79): error TS7006: Parameter 'p' implicitly has an 'any' type.
-[03:03:22.571] src/components/prediction/PredictionEngine.tsx(546,11): error TS2322: Type '((prediction: any) => void) | undefined' is not assignable to type '((predictionData: any) => Promise<string>) | undefined'.
-[03:03:22.571]   Type '(prediction: any) => void' is not assignable to type '(predictionData: any) => Promise<string>'.
-[03:03:22.571]     Type 'void' is not assignable to type 'Promise<string>'.
-[03:03:22.572] src/components/race/DataInputModal.tsx(4,10): error TS6133: 'ResponsiveContainer' is declared but its value is never read.
-[03:03:22.572] src/components/race/DataInputModal.tsx(4,31): error TS6133: 'ResponsiveCard' is declared but its value is never read.
-[03:03:22.572] src/components/race/ManualHorseEntry.tsx(4,10): error TS6133: 'ResponsiveContainer' is declared but its value is never read.
-[03:03:22.572] src/components/race/RaceCreation.tsx(54,19): error TS2345: Argument of type '(prev: { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }) => { horses: any[]; date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; }' is not assignable to parameter of type 'SetStateAction<{ date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }>'.
-[03:03:22.574]   Type '(prev: { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }) => { horses: any[]; date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; }' is not assignable to type '(prevState: { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }) => { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }'.
-[03:03:22.575]     Call signature return types '{ horses: any[]; date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; }' and '{ date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }' are incompatible.
-[03:03:22.575]       The types of 'horses' are incompatible between these types.
-[03:03:22.576]         Type 'any[]' is not assignable to type 'never[]'.
-[03:03:22.576]           Type 'any' is not assignable to type 'never'.
-[03:03:22.576] src/components/race/RaceCreation.tsx(66,7): error TS2322: Type 'any' is not assignable to type 'never'.
-[03:03:22.576] src/components/race/RaceCreation.tsx(71,19): error TS2345: Argument of type '(prev: { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }) => { horses: any[]; date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; }' is not assignable to parameter of type 'SetStateAction<{ date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }>'.
-[03:03:22.576]   Type '(prev: { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }) => { horses: any[]; date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; }' is not assignable to type '(prevState: { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }) => { date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }'.
-[03:03:22.576]     Call signature return types '{ horses: any[]; date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; }' and '{ date: string; venue: string; raceNumber: number; distance: number; surface: string; condition: string; horses: never[]; }' are incompatible.
-[03:03:22.576]       The types of 'horses' are incompatible between these types.
-[03:03:22.576]         Type 'any[]' is not assignable to type 'never[]'.
-[03:03:22.576]           Type 'any' is not assignable to type 'never'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(2,43): error TS6133: 'Trophy' is declared but its value is never read.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(86,89): error TS6133: 'isCorrect' is declared but its value is never read.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(287,43): error TS6133: 'index' is declared but its value is never read.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(312,27): error TS2322: Type '"outline"' is not assignable to type '"primary" | "secondary" | "danger" | "ghost" | undefined'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(360,32): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(361,32): error TS2339: Property 'name' does not exist on type 'HorseAnalysis'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(361,42): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(373,74): error TS2339: Property 'name' does not exist on type 'HorseAnalysis'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(467,13): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.576] src/components/screens/HistoryScreen.tsx(467,30): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.577] src/components/screens/HistoryScreen.tsx(469,13): error TS2339: Property 'name' does not exist on type 'HorseAnalysis'.
-[03:03:22.577] src/components/screens/HistoryScreen.tsx(469,23): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.577] src/components/screens/HistoryScreen.tsx(469,40): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.577] src/components/screens/HistoryScreen.tsx(522,13): error TS2322: Type '"outline"' is not assignable to type '"primary" | "secondary" | "danger" | "ghost" | undefined'.
-[03:03:22.577] src/components/screens/HistoryScreen.tsx(591,13): error TS2322: Type '"outline"' is not assignable to type '"primary" | "secondary" | "danger" | "ghost" | undefined'.
-[03:03:22.577] src/components/screens/HomeScreen.tsx(2,16): error TS6133: 'Calculator' is declared but its value is never read.
-[03:03:22.577] src/components/screens/InvestmentScreen.tsx(25,3): error TS6133: 'raceId' is declared but its value is never read.
-[03:03:22.577] src/components/screens/InvestmentScreen.tsx(26,3): error TS6133: 'predictionId' is declared but its value is never read.
-[03:03:22.577] src/components/screens/InvestmentScreen.tsx(27,3): error TS6133: 'venue' is declared but its value is never read.
-[03:03:22.577] src/components/screens/InvestmentScreen.tsx(28,3): error TS6133: 'raceNumber' is declared but its value is never read.
-[03:03:22.577] src/components/screens/InvestmentScreen.tsx(29,3): error TS6133: 'raceDate' is declared but its value is never read.
-[03:03:22.577] src/components/statistics/DetailedStatisticsView.tsx(1,27): error TS6133: 'useMemo' is declared but its value is never read.
-[03:03:22.577] src/components/statistics/DetailedStatisticsView.tsx(10,3): error TS6133: 'ChevronDown' is declared but its value is never read.
-[03:03:22.577] src/components/statistics/DetailedStatisticsView.tsx(11,3): error TS6133: 'ChevronUp' is declared but its value is never read.
-[03:03:22.577] src/components/statistics/DetailedStatisticsView.tsx(14,26): error TS6133: 'FlexLayout' is declared but its value is never read.
-[03:03:22.577] src/components/statistics/DetailedStatisticsView.tsx(28,10): error TS6133: 'expandedSections' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/DetailedStatisticsView.tsx(30,9): error TS6133: 'toggleSection' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/DetailedStatisticsView.tsx(374,53): error TS6133: 'index' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/HitPatternAnalysis.tsx(5,1): error TS6133: 'ZoomableChart' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(12,53): error TS6133: 'ROIAnalysisType' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(12,70): error TS6133: 'HitPattern' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(12,82): error TS6133: 'ImprovementSuggestion' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(14,40): error TS6133: 'PerformanceMetrics' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(15,52): error TS6133: 'TrendAnalysisType' is declared but its value is never read.
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(116,59): error TS2345: Argument of type 'PredictionHistoryEntry[]' is not assignable to parameter of type 'PredictionResult[]'.
-[03:03:22.583]   Type 'PredictionHistoryEntry' is missing the following properties from type 'PredictionResult': raceId, timestamp
-[03:03:22.583] src/components/statistics/StatisticsView.tsx(119,71): error TS2345: Argument of type 'PredictionHistoryEntry[]' is not assignable to parameter of type 'PredictionResult[]'.
-[03:03:22.583]   Type 'PredictionHistoryEntry' is missing the following properties from type 'PredictionResult': raceId, timestamp
-[03:03:22.584] src/components/statistics/StatisticsView.tsx(132,61): error TS2345: Argument of type 'PredictionHistoryEntry[]' is not assignable to parameter of type 'PredictionResult[]'.
-[03:03:22.584]   Type 'PredictionHistoryEntry' is missing the following properties from type 'PredictionResult': raceId, timestamp
-[03:03:22.584] src/hooks/index.ts(3,10): error TS2305: Module '"./useGestures"' has no exported member 'useGestures'.
-[03:03:22.584] src/hooks/usePredictionWorker.ts(185,32): error TS6133: 'predictionHistory' is declared but its value is never read.
-[03:03:22.584] src/services/__tests__/workflowService.test.ts(9,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
-[03:03:22.584] src/services/__tests__/workflowService.test.ts(12,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
-[03:03:22.584] src/services/__tests__/workflowService.test.ts(13,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.584] src/services/__tests__/workflowService.test.ts(16,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
-[03:03:22.584] src/services/__tests__/workflowService.test.ts(17,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(18,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(19,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(20,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(21,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(22,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(23,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(24,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(27,3): error TS2582: Cannot find name 'test'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(28,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(29,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/__tests__/workflowService.test.ts(30,5): error TS2304: Cannot find name 'expect'.
-[03:03:22.585] src/services/dataExportService.ts(58,15): error TS6133: 'race' is declared but its value is never read.
-[03:03:22.585] src/services/dataExportService.ts(64,46): error TS2339: Property 'number' does not exist on type 'HorseAnalysis'.
-[03:03:22.585] src/services/dataExportService.ts(414,25): error TS6133: 'e' is declared but its value is never read.
-[03:03:22.585] src/services/dataParsingService.ts(572,5): error TS2304: Cannot find name 'log'.
-[03:03:22.585] src/services/database.ts(77,34): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.585] src/services/database.ts(77,48): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.585] src/services/database.ts(82,49): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(82,58): error TS6133: 'obj' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(82,63): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(83,21): error TS2339: Property 'updatedAt' does not exist on type 'Object'.
-[03:03:22.586] src/services/database.ts(86,40): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(86,54): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(92,40): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(92,54): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(98,37): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(98,51): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(103,52): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(103,61): error TS6133: 'obj' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(103,66): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(104,21): error TS2339: Property 'updatedAt' does not exist on type 'Object'.
-[03:03:22.586] src/services/database.ts(108,43): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(108,57): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(113,58): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(113,67): error TS6133: 'obj' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(113,72): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(114,21): error TS2339: Property 'updatedAt' does not exist on type 'Object'.
-[03:03:22.586] src/services/database.ts(118,47): error TS6133: 'primKey' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(118,61): error TS6133: 'trans' is declared but its value is never read.
-[03:03:22.586] src/services/database.ts(200,11): error TS2322: Type '"medium"' is not assignable to type 'WorkflowPriority'.
-[03:03:22.587] src/services/detailedAnalysisService.ts(1,28): error TS6133: 'AccuracyStats' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(1,43): error TS6133: 'ConditionStats' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(1,59): error TS6133: 'TrendData' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(273,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(274,5): error TS6133: 'investmentMap' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(285,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(286,5): error TS6133: 'investmentMap' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(417,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(418,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(433,33): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(446,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(447,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(454,36): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(458,40): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(462,40): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(466,39): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(470,39): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedAnalysisService.ts(474,39): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/detailedStatisticsService.ts(355,3): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(175,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(377,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(411,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(422,43): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(432,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(433,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(445,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(446,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(458,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(459,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.587] src/services/enhancedStatisticsService.ts(466,5): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/enhancedStatisticsService.ts(467,5): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.588] src/services/enhancedStatisticsService.ts(516,38): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/enhancedStatisticsService.ts(521,36): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/enhancedStatisticsService.ts(526,31): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/index.ts(2,10): error TS2305: Module '"./dataParsingService"' has no exported member 'dataParsingService'.
-[03:03:22.588] src/services/index.ts(3,10): error TS2305: Module '"./predictionService"' has no exported member 'predictionService'.
-[03:03:22.588] src/services/investmentPerformanceService.ts(1,22): error TS6133: 'InvestmentPerformance' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(1,28): error TS6133: 'AccuracyStats' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(1,43): error TS6133: 'ConditionStats' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(3,30): error TS6133: 'investmentPerformanceService' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(404,45): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(404,78): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(417,45): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(417,78): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(425,44): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(425,77): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(436,42): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(436,75): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(444,38): error TS6133: 'predictions' is declared but its value is never read.
-[03:03:22.588] src/services/performanceAnalysisService.ts(444,71): error TS6133: 'investments' is declared but its value is never read.
-[03:03:22.588] src/services/predictionService.ts(37,52): error TS6133: 'raceInfo' is declared but its value is never read.
-[03:03:22.588] src/services/predictionService.ts(245,50): error TS7006: Parameter 'race' implicitly has an 'any' type.
-[03:03:22.588] src/services/predictionService.ts(349,46): error TS7006: Parameter 'race' implicitly has an 'any' type.
-[03:03:22.588] src/services/predictionService.ts(365,24): error TS7006: Parameter 'race' implicitly has an 'any' type.
-[03:03:22.588] src/services/predictionService.ts(365,30): error TS7006: Parameter 'index' implicitly has an 'any' type.
-[03:03:22.588] src/services/pushNotification.ts(13,13): error TS2552: Cannot find name 'NotificationAction'. Did you mean 'NotificationOptions'?
-[03:03:22.588] src/services/pushNotification.ts(108,11): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'string | BufferSource | null | undefined'.
-[03:03:22.588]   Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
-[03:03:22.588]     Types of property 'buffer' are incompatible.
-[03:03:22.588]       Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
-[03:03:22.589]         Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
-[03:03:22.589]           Types of property '[Symbol.toStringTag]' are incompatible.
-[03:03:22.589]             Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
-[03:03:22.589] src/services/pushNotification.ts(176,13): error TS2741: Property 'title' is missing in type '{ body: string; icon: string; badge: string; tag: string; data: any; actions: NotificationAction[]; requireInteraction: boolean; silent: boolean; }' but required in type 'NotificationOptions'.
-[03:03:22.589] src/utils/serviceWorker.ts(111,26): error TS2339: Property 'sync' does not exist on type 'ServiceWorkerRegistration'.
-[03:03:22.589] src/utils/serviceWorker.ts(132,11): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'string | BufferSource | null | undefined'.
-[03:03:22.589]   Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
-[03:03:22.589]     Types of property 'buffer' are incompatible.
-[03:03:22.594]       Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
-[03:03:22.594]         Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
-[03:03:22.594]           Types of property '[Symbol.toStringTag]' are incompatible.
-[03:03:22.594]             Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
-[03:03:22.594] src/utils/testDataGenerator.ts(13,5): error TS2322: Type '{ id: string; date: string; race: { venue: string; raceNumber: number; distance: number; surface: "turf" | "dirt"; raceDate: string; }; predictions: { horse: { name: string; number: number; jockey: string; popularity: number; odds: number; }; scores: { ...; }; speedIndex: number; recentForm: string; confidence: any;...' is not assignable to type 'PredictionResult[]'.
-[03:03:22.594]   Type '{ id: string; date: string; race: { venue: string; raceNumber: number; distance: number; surface: "turf" | "dirt"; raceDate: string; }; predictions: { horse: { name: string; number: number; jockey: string; popularity: number; odds: number; }; scores: { ...; }; speedIndex: number; recentForm: string; confidence: any;...' is missing the following properties from type 'PredictionResult': raceId, timestamp
-[03:03:22.594] src/utils/testDataGenerator.ts(110,11): error TS2322: Type 'string' is not assignable to type 'Date'.
-[03:03:22.618] Error: Command "npm run build" exited with 2
+[11:22:36.243] Running build in Washington, D.C., USA (East) – iad1
+[11:22:36.243] Build machine configuration: 2 cores, 8 GB
+[11:22:36.260] Cloning github.com/wwaakkoo/keiba-app (Branch: main, Commit: c67d081)
+[11:22:36.390] Previous build caches not available
+[11:22:36.572] Cloning completed: 312.000ms
+[11:22:36.895] Running "vercel build"
+[11:22:37.284] Vercel CLI 46.0.2
+[11:22:37.891] Installing dependencies...
+[11:22:40.468] npm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+[11:22:40.574] npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+[11:22:41.281] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[11:22:41.294] npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[11:22:41.669] npm warn deprecated source-map@0.8.0-beta.0: The work that was done in this beta branch won't be included in future versions
+[11:22:42.313] npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+[11:22:42.314] npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+[11:22:44.350] npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[11:22:45.266] 
+[11:22:45.267] added 600 packages in 7s
+[11:22:45.267] 
+[11:22:45.268] 156 packages are looking for funding
+[11:22:45.268]   run `npm fund` for details
+[11:22:45.314] Running "npm run build"
+[11:22:45.447] 
+[11:22:45.447] > keiba-mobile-app@0.1.0 build
+[11:22:45.447] > tsc && vite build
+[11:22:45.447] 
+[11:22:53.470] src/components/screens/HistoryScreen.tsx(287,43): error TS6133: 'index' is declared but its value is never read.
+[11:22:53.471] src/components/screens/HistoryScreen.tsx(476,35): error TS18047: 'a' is possibly 'null'.
+[11:22:53.471] src/components/screens/HistoryScreen.tsx(476,39): error TS18047: 'b' is possibly 'null'.
+[11:22:53.472] src/components/screens/HistoryScreen.tsx(506,39): error TS2322: Type 'number | null' is not assignable to type 'string | number | readonly string[] | undefined'.
+[11:22:53.472]   Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+[11:22:53.472] src/components/statistics/DetailedStatisticsView.tsx(1,27): error TS6133: 'useMemo' is declared but its value is never read.
+[11:22:53.473] src/components/statistics/DetailedStatisticsView.tsx(10,3): error TS6133: 'ChevronDown' is declared but its value is never read.
+[11:22:53.473] src/components/statistics/DetailedStatisticsView.tsx(11,3): error TS6133: 'ChevronUp' is declared but its value is never read.
+[11:22:53.475] src/components/statistics/DetailedStatisticsView.tsx(14,26): error TS6133: 'FlexLayout' is declared but its value is never read.
+[11:22:53.475] src/components/statistics/DetailedStatisticsView.tsx(28,10): error TS6133: 'expandedSections' is declared but its value is never read.
+[11:22:53.476] src/components/statistics/DetailedStatisticsView.tsx(30,9): error TS6133: 'toggleSection' is declared but its value is never read.
+[11:22:53.476] src/components/statistics/DetailedStatisticsView.tsx(374,53): error TS6133: 'index' is declared but its value is never read.
+[11:22:53.476] src/components/statistics/HitPatternAnalysis.tsx(5,1): error TS6133: 'ZoomableChart' is declared but its value is never read.
+[11:22:53.476] src/components/statistics/StatisticsView.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+[11:22:53.477] src/components/statistics/StatisticsView.tsx(12,53): error TS6133: 'ROIAnalysisType' is declared but its value is never read.
+[11:22:53.477] src/components/statistics/StatisticsView.tsx(12,70): error TS6133: 'HitPattern' is declared but its value is never read.
+[11:22:53.477] src/components/statistics/StatisticsView.tsx(12,82): error TS6133: 'ImprovementSuggestion' is declared but its value is never read.
+[11:22:53.477] src/components/statistics/StatisticsView.tsx(14,40): error TS6133: 'PerformanceMetrics' is declared but its value is never read.
+[11:22:53.477] src/components/statistics/StatisticsView.tsx(15,52): error TS6133: 'TrendAnalysisType' is declared but its value is never read.
+[11:22:53.478] src/components/statistics/StatisticsView.tsx(116,59): error TS2345: Argument of type 'PredictionHistoryEntry[]' is not assignable to parameter of type 'PredictionResult[]'.
+[11:22:53.478]   Type 'PredictionHistoryEntry' is missing the following properties from type 'PredictionResult': raceId, timestamp
+[11:22:53.478] src/components/statistics/StatisticsView.tsx(119,71): error TS2345: Argument of type 'PredictionHistoryEntry[]' is not assignable to parameter of type 'PredictionResult[]'.
+[11:22:53.479]   Type 'PredictionHistoryEntry' is missing the following properties from type 'PredictionResult': raceId, timestamp
+[11:22:53.479] src/components/statistics/StatisticsView.tsx(132,61): error TS2345: Argument of type 'PredictionHistoryEntry[]' is not assignable to parameter of type 'PredictionResult[]'.
+[11:22:53.479]   Type 'PredictionHistoryEntry' is missing the following properties from type 'PredictionResult': raceId, timestamp
+[11:22:53.479] src/hooks/usePredictionWorker.ts(185,32): error TS6133: 'predictionHistory' is declared but its value is never read.
+[11:22:53.485] src/services/dataExportService.ts(58,15): error TS6133: 'race' is declared but its value is never read.
+[11:22:53.486] src/services/dataExportService.ts(414,25): error TS6133: 'e' is declared but its value is never read.
+[11:22:53.529] src/services/database.ts(92,40): error TS6133: 'primKey' is declared but its value is never read.
+[11:22:53.530] src/services/database.ts(92,54): error TS6133: 'trans' is declared but its value is never read.
+[11:22:53.530] src/services/detailedAnalysisService.ts(1,28): error TS6133: 'AccuracyStats' is declared but its value is never read.
+[11:22:53.530] src/services/detailedAnalysisService.ts(1,43): error TS6133: 'ConditionStats' is declared but its value is never read.
+[11:22:53.530] src/services/detailedAnalysisService.ts(1,59): error TS6133: 'TrendData' is declared but its value is never read.
+[11:22:53.530] src/services/detailedAnalysisService.ts(273,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(274,5): error TS6133: 'investmentMap' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(285,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(286,5): error TS6133: 'investmentMap' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(417,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(418,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(433,33): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(446,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(447,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(454,36): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(458,40): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.533] src/services/detailedAnalysisService.ts(462,40): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/detailedAnalysisService.ts(466,39): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/detailedAnalysisService.ts(470,39): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/detailedAnalysisService.ts(474,39): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/detailedStatisticsService.ts(355,3): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(175,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(377,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(411,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(422,43): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(432,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(433,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(445,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(446,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(458,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(459,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.534] src/services/enhancedStatisticsService.ts(466,5): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/enhancedStatisticsService.ts(467,5): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.535] src/services/enhancedStatisticsService.ts(516,38): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/enhancedStatisticsService.ts(521,36): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/enhancedStatisticsService.ts(526,31): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/investmentPerformanceService.ts(1,22): error TS6133: 'InvestmentPerformance' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(1,28): error TS6133: 'AccuracyStats' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(1,43): error TS6133: 'ConditionStats' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(3,30): error TS6133: 'investmentPerformanceService' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(404,45): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(404,78): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(417,45): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(417,78): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(425,44): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(425,77): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.535] src/services/performanceAnalysisService.ts(436,42): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.536] src/services/performanceAnalysisService.ts(436,75): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.536] src/services/performanceAnalysisService.ts(444,38): error TS6133: 'predictions' is declared but its value is never read.
+[11:22:53.536] src/services/performanceAnalysisService.ts(444,71): error TS6133: 'investments' is declared but its value is never read.
+[11:22:53.536] src/services/predictionService.ts(37,52): error TS6133: 'raceInfo' is declared but its value is never read.
+[11:22:53.536] src/services/predictionService.ts(245,50): error TS7006: Parameter 'race' implicitly has an 'any' type.
+[11:22:53.536] src/services/predictionService.ts(349,46): error TS7006: Parameter 'race' implicitly has an 'any' type.
+[11:22:53.536] src/services/predictionService.ts(365,24): error TS7006: Parameter 'race' implicitly has an 'any' type.
+[11:22:53.536] src/services/predictionService.ts(365,30): error TS7006: Parameter 'index' implicitly has an 'any' type.
+[11:22:53.536] src/services/pushNotification.ts(182,9): error TS2353: Object literal may only specify known properties, and 'actions' does not exist in type 'NotificationOptions'.
+[11:22:53.536] src/services/pushNotification.ts(202,29): error TS2345: Argument of type 'NotificationOptions' is not assignable to parameter of type 'CustomNotificationOptions'.
+[11:22:53.536]   Property 'title' is missing in type 'NotificationOptions' but required in type 'CustomNotificationOptions'.
+[11:22:53.536] src/services/pushNotification.ts(316,9): error TS2353: Object literal may only specify known properties, and 'title' does not exist in type 'NotificationOptions'.
+[11:22:53.536] src/utils/testDataGenerator.ts(13,5): error TS2322: Type '{ id: string; raceId: string; timestamp: Date; date: string; race: { venue: string; raceNumber: number; distance: number; surface: "turf" | "dirt"; raceDate: string; }; predictions: { horse: { ...; }; scores: { ...; }; speedIndex: number; recentForm: string; confidence: any; }[]; ... 4 more ...; isResultEntered: boo...' is not assignable to type 'PredictionResult[]'.
+[11:22:53.536]   Type '{ id: string; raceId: string; timestamp: Date; date: string; race: { venue: string; raceNumber: number; distance: number; surface: "turf" | "dirt"; raceDate: string; }; predictions: { horse: { ...; }; scores: { ...; }; speedIndex: number; recentForm: string; confidence: any; }[]; ... 4 more ...; isResultEntered: boo...' is not assignable to type 'PredictionResult'.
+[11:22:53.536]     Types of property 'predictions' are incompatible.
+[11:22:53.536]       Type '{ horse: { name: string; number: number; jockey: string; popularity: number; odds: number; }; scores: { speed: number; recent: number; odds: number; total: number; }; speedIndex: number; recentForm: string; confidence: any; }[]' is not assignable to type 'HorseAnalysis[]'.
+[11:22:53.536]         Property 'pastRaces' is missing in type '{ horse: { name: string; number: number; jockey: string; popularity: number; odds: number; }; scores: { speed: number; recent: number; odds: number; total: number; }; speedIndex: number; recentForm: string; confidence: any; }' but required in type 'HorseAnalysis'.
+[11:22:53.536] src/utils/testDataGenerator.ts(113,11): error TS2353: Object literal may only specify known properties, and 'raceInfo' does not exist in type 'Investment'.
+[11:22:53.551] Error: Command "npm run build" exited with 2

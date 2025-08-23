@@ -34,7 +34,8 @@ export class TestDataGenerator {
         },
         speedIndex: Math.random() * 100,
         recentForm: ['◎', '○', '▲', '△', '×'][Math.floor(Math.random() * 5)],
-        confidence: ['high', 'medium', 'low'][Math.floor(Math.random() * 3)] as any
+        confidence: ['high', 'medium', 'low'][Math.floor(Math.random() * 3)] as any,
+        pastRaces: []
       }));
 
       // 実際の結果を生成（70%の確率で結果入力済み）
@@ -102,6 +103,7 @@ export class TestDataGenerator {
 
         investments.push({
           id: `test-investment-${pred.id}`,
+          raceId: pred.raceId,
           predictionId: pred.id,
           amount,
           betType: betType as any,
@@ -110,11 +112,9 @@ export class TestDataGenerator {
           payout,
           profit,
           timestamp: new Date(pred.date),
-          raceInfo: {
-            venue: pred.race.venue,
-            raceNumber: pred.race.raceNumber,
-            date: pred.race.raceDate
-          }
+          venue: pred.race.venue,
+          raceNumber: pred.race.raceNumber,
+          raceDate: pred.race.raceDate
         });
       }
     });
