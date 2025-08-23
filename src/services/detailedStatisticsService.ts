@@ -331,10 +331,10 @@ function calculateHitPatterns(analyses: DetailedPredictionAnalysis['accuracyAnal
     // 1位的中
     if (analysis.exactMatch) exactFirst++;
     
-    // 3着以内カバー率
-    if (analysis.top3Coverage === 3) top3Coverage.all3++;
-    else if (analysis.top3Coverage === 2) top3Coverage.any2++;
-    else if (analysis.top3Coverage === 1) top3Coverage.any1++;
+    // 3着以内カバー率（累積的にカウント）
+    if (analysis.top3Coverage >= 3) top3Coverage.all3++;
+    if (analysis.top3Coverage >= 2) top3Coverage.any2++;
+    if (analysis.top3Coverage >= 1) top3Coverage.any1++;
   });
   
   const total = analyses.length;
