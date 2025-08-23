@@ -182,7 +182,7 @@ function fallbackCalculateHorseScore(horse: Horse, weights: PredictionWeights): 
   return Math.max(0, Math.min(1, score));
 }
 
-function fallbackAnalyzeTrends(predictionHistory: any[]): any {
+function fallbackAnalyzeTrends(_predictionHistory: any[]): any {
   return {
     accuracyTrend: [],
     profitTrend: [],

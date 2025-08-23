@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { 
   Trophy, 
   Target, 
@@ -7,11 +7,9 @@ import {
   PieChart, 
   Award, 
   Calculator,
-  ChevronDown,
-  ChevronUp,
   Info
 } from 'lucide-react';
-import { ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
+import { ResponsiveCard } from '@/components/common/ResponsiveContainer';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { DetailedStatistics } from '@/services/detailedStatisticsService';
 
@@ -25,10 +23,10 @@ export const DetailedStatisticsView: React.FC<DetailedStatisticsViewProps> = ({
   isLoading = false
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'accuracy' | 'patterns' | 'investment' | 'conditions' | 'trends'>('overview');
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+  const [_expandedSections, _setExpandedSections] = useState<Record<string, boolean>>({});
 
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
+  const _toggleSection = (section: string) => {
+    _setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
@@ -371,7 +369,7 @@ export const DetailedStatisticsView: React.FC<DetailedStatisticsViewProps> = ({
           </h3>
           
           <div className="space-y-3">
-            {statistics.trends.recent10.map((trend, index) => (
+            {statistics.trends.recent10.map((trend, _index) => (
               <div key={trend.raceId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="text-sm font-medium">{trend.raceLabel}</div>

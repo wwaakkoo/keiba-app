@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Target, Clock, MapPin, Zap, Calendar } from 'lucide-react';
 import { ResponsiveCard, ResponsiveGrid, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
-import { ZoomableChart } from '@/components/common/ZoomableChart';
+// import { ZoomableChart } from '@/components/common/ZoomableChart';
 import { HitPattern } from '@/services/performanceAnalysisService';
 
 interface HitPatternAnalysisProps {

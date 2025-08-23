@@ -1,4 +1,4 @@
-import { PredictionResult, AccuracyStats, ConditionStats, TrendData } from '@/types/prediction';
+import { PredictionResult } from '@/types/prediction';
 import { Investment } from '@/types/investment';
 
 export interface DetailedConditionStats {

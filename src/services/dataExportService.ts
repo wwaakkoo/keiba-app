@@ -55,7 +55,7 @@ export class DataExportService {
 
       // データ行の作成
       for (const prediction of filteredPredictions) {
-        const race = await raceRepository.findById(prediction.raceId);
+        const _race = await raceRepository.findById(prediction.raceId);
         
         const row = [
           prediction.id,
@@ -411,7 +411,7 @@ export class DataExportService {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
-      reader.onerror = (e) => reject(new Error('ファイルの読み取りに失敗しました'));
+      reader.onerror = (_e) => reject(new Error('ファイルの読み取りに失敗しました'));
       reader.readAsText(file, 'UTF-8');
     });
   }

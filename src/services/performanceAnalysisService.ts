@@ -1,6 +1,6 @@
-import { PredictionResult, AccuracyStats, ConditionStats } from '@/types/prediction';
+import { PredictionResult } from '@/types/prediction';
 import { Investment } from '@/types/investment';
-import { PerformanceMetrics, investmentPerformanceService } from './investmentPerformanceService';
+import { PerformanceMetrics } from './investmentPerformanceService';
 
 export interface ROIAnalysis {
   overall: {

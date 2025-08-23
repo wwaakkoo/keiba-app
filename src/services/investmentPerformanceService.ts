@@ -1,4 +1,4 @@
-import { Investment, InvestmentPerformance } from '@/types/investment';
+import { Investment } from '@/types/investment';
 
 export interface PerformanceMetrics {
   roi: number; // Return on Investment (%)
