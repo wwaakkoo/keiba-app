@@ -34,7 +34,7 @@ export const calculateSpeedIndex = (pastRaces: any[], targetDistance: number, ta
 };
 
 // 新馬戦用スコア計算関数
-export const calculateDebutantScore = (horse: any, raceInfo: any, weights = { speed: 40, recent: 30, odds: 30 }) => {
+export const calculateDebutantScore = (horse: any, _raceInfo: any, weights = { speed: 40, recent: 30, odds: 30 }) => {
   console.log(`🌟 新馬戦スコア詳細計算: ${horse.name}`, {
     trainerRating: horse.trainerRating || 3,
     jockeyRating: horse.jockeyRating || 3,
@@ -242,7 +242,7 @@ export const calculateConfidenceLevel = (predictions: any[], weights: any) => {
     if (!horse.pastRaces || horse.pastRaces.length === 0) return sum;
     
     // 同距離・同馬場での実績があるかチェック
-    const relevantRaces = horse.pastRaces.filter(race => 
+    const relevantRaces = horse.pastRaces.filter((race: any) => 
       Math.abs(race.distance - (race.targetDistance || 1600)) <= 200 &&
       race.surface === (race.targetSurface || 'turf')
     );
@@ -346,7 +346,7 @@ export const calculateOptimizedHorseScore = (horse: any, raceInfo: any, weights 
   let speedScore = Math.min(weights.speed, speedIndex * (weights.speed / 100));
   
   // 距離適性ボーナス
-  const distanceBonus = horse.pastRaces.some(race => 
+  const distanceBonus = horse.pastRaces.some((race: any) => 
     Math.abs(race.distance - raceInfo.distance) <= 200
   ) ? speedScore * 0.1 : 0;
   
@@ -362,7 +362,7 @@ export const calculateOptimizedHorseScore = (horse: any, raceInfo: any, weights 
   let recentScore = 0;
   const recentRaces = horse.pastRaces.slice(0, 3); // 最新3走
   
-  recentRaces.forEach((race, index) => {
+  recentRaces.forEach((race: any, index: number) => {
     const weight = [0.5, 0.3, 0.2][index] || 0; // 新しいレースほど重視
     let raceScore = 0;
     

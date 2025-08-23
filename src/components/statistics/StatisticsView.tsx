@@ -113,10 +113,10 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
     }
 
     // ROI分析
-    const roiData = performanceAnalysisService.analyzeROI(predictionHistory, investments);
+    const roiData = performanceAnalysisService.analyzeROI(predictionHistory as any[], investments);
     
     // 的中パターン分析
-    const patternData = performanceAnalysisService.analyzeHitPatterns(predictionHistory, investments);
+    const patternData = performanceAnalysisService.analyzeHitPatterns(predictionHistory as any[], investments);
     
     // パフォーマンス指標
     const metricsData = investmentPerformanceService.calculatePerformance(investments);
@@ -129,7 +129,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
     );
     
     // トレンド分析
-    const trendData = detailedAnalysisService.analyzeTrends(predictionHistory, investments);
+    const trendData = detailedAnalysisService.analyzeTrends(predictionHistory as any[], investments);
 
     return {
       roiAnalysis: roiData,
