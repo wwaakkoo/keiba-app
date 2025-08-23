@@ -88,7 +88,7 @@ export const PredictionResults: React.FC<PredictionResultsProps> = ({
   }
 
   // デバッグログは開発環境でのみ出力
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log('🔍 PredictionResults受取データ構造確認:', predictions.slice(0, 2));
     console.log('🎯 スコア詳細確認:', predictions.slice(0, 2).map(p => ({
       name: p.horse?.name,
@@ -288,7 +288,7 @@ export const PredictionResults: React.FC<PredictionResultsProps> = ({
                 selectedHorse === index ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
               }`}
               onClick={() => {
-                if (process.env.NODE_ENV === 'development') {
+                if (import.meta.env.DEV) {
                   console.log('🐎 馬をクリック:', horse.horse.name, 'index:', index, '現在の選択:', selectedHorse);
                 }
                 setSelectedHorse(selectedHorse === index ? null : index);

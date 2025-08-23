@@ -378,7 +378,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                           );
                           
                           // デバッグログは開発環境でのみ出力
-                          if (!horse && process.env.NODE_ENV === 'development') {
+                          if (!horse && import.meta.env.DEV) {
                             console.log(`🔍 馬が見つかりません - 馬番:${horseNumber}`, {
                               predictions: prediction.predictions,
                               predictionsCount: prediction.predictions?.length,

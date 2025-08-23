@@ -62,14 +62,14 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
   // 予想結果の計算（Web Worker使用）
   const calculatePredictionsAsync = useCallback(async () => {
     if (!race.horses || race.horses.length === 0) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
       console.log('予想計算スキップ: 馬データなし');
     }
       setPredictionResult(null);
       return;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('予想計算開始:', {
         horsesCount: race.horses.length,
         weights,
@@ -256,7 +256,7 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
         calculatedAt: lastCalculated
       };
       
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔍 PredictionEngine - 予想保存データ:', predictionData.raceInfo);
       }
       
