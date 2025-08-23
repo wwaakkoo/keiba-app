@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, TrendingUp, AlertCircle, Target, Trash2 } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
+import { BackHeaderWithHome } from '@/components/common/MobileHeader';
 import { predictionRepository } from '@/services/repositories/PredictionRepository';
 import { investmentRepository } from '@/services/repositories/InvestmentRepository';
 import { PredictionResult } from '@/types/prediction';
@@ -15,10 +16,12 @@ const formatDate = (date: string | Date) => {
 
 interface HistoryScreenProps {
   onBack: () => void;
+  onNavigateToHome?: () => void;
 }
 
 export const HistoryScreen: React.FC<HistoryScreenProps> = ({
-  onBack
+  onBack,
+  onNavigateToHome = () => {}
 }) => {
   const [predictions, setPredictions] = useState<PredictionResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -243,19 +246,11 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <FlexLayout direction="row" align="center" gap="md">
-          <TouchOptimizedButton
-            onClick={onBack}
-            variant="ghost"
-            size="sm"
-            icon={ArrowLeft}
-          >
-            <span className="sr-only">戻る</span>
-          </TouchOptimizedButton>
-          <h1 className="text-responsive-lg font-bold">📈 成績履歴</h1>
-        </FlexLayout>
-      </div>
+      <BackHeaderWithHome
+        title="📈 成績履歴"
+        onBack={onBack}
+        onHome={onNavigateToHome}
+      />
 
       <ResponsiveContainer maxWidth="mobile" padding="md">
         {isLoading ? (

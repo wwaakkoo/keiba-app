@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Menu, MoreVertical } from 'lucide-react';
+import { ArrowLeft, Menu, MoreVertical, Home } from 'lucide-react';
 import { TouchOptimizedButton } from './TouchOptimizedButton';
 
 interface MobileHeaderProps {
@@ -7,9 +7,11 @@ interface MobileHeaderProps {
   showBackButton?: boolean;
   showMenuButton?: boolean;
   showMoreButton?: boolean;
+  showHomeButton?: boolean;
   onBack?: () => void;
   onMenu?: () => void;
   onMore?: () => void;
+  onHome?: () => void;
   rightContent?: React.ReactNode;
   className?: string;
 }
@@ -19,9 +21,11 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   showBackButton = false,
   showMenuButton = false,
   showMoreButton = false,
+  showHomeButton = false,
   onBack,
   onMenu,
   onMore,
+  onHome,
   rightContent,
   className = ''
 }) => {
@@ -68,17 +72,30 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           </h1>
         </div>
 
-        {/* 右側：カスタムコンテンツまたはMoreボタン */}
-        <div className="flex items-center">
+        {/* 右側：ホームボタン、カスタムコンテンツ、Moreボタン */}
+        <div className="flex items-center gap-1">
+          {showHomeButton && onHome && (
+            <TouchOptimizedButton
+              size="sm"
+              variant="ghost"
+              icon={Home}
+              onClick={onHome}
+              className="p-2 min-w-[44px]"
+              haptic
+            >
+              <span className="sr-only">ホーム</span>
+            </TouchOptimizedButton>
+          )}
+          
           {rightContent}
           
-          {showMoreButton && onMore && !rightContent && (
+          {showMoreButton && onMore && (
             <TouchOptimizedButton
               size="sm"
               variant="ghost"
               icon={MoreVertical}
               onClick={onMore}
-              className="ml-2 p-2 min-w-[44px]"
+              className="p-2 min-w-[44px]"
               haptic
             >
               <span className="sr-only">その他</span>
@@ -112,6 +129,22 @@ export const BackHeader: React.FC<{
     title={title}
     showBackButton
     onBack={onBack}
+    rightContent={rightContent}
+  />
+);
+
+export const BackHeaderWithHome: React.FC<{
+  title: string;
+  onBack: () => void;
+  onHome: () => void;
+  rightContent?: React.ReactNode;
+}> = ({ title, onBack, onHome, rightContent }) => (
+  <MobileHeader
+    title={title}
+    showBackButton
+    showHomeButton
+    onBack={onBack}
+    onHome={onHome}
     rightContent={rightContent}
   />
 );

@@ -2,7 +2,7 @@ import React, { useState, memo, useMemo, useCallback } from 'react';
 import { TrendingUp, Target, DollarSign, BarChart3, Brain, Lightbulb } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, ResponsiveGrid, FlexLayout } from '@/components/common/ResponsiveContainer';
-import { BackHeader } from '@/components/common/MobileHeader';
+import { BackHeaderWithHome } from '@/components/common/MobileHeader';
 import { ZoomableChart } from '@/components/common/ZoomableChart';
 import { ROIAnalysis } from './ROIAnalysis';
 import { HitPatternAnalysis } from './HitPatternAnalysis';
@@ -76,6 +76,7 @@ interface ConditionStats {
 
 interface StatisticsViewProps {
   onBack: () => void;
+  onNavigateToHome?: () => void;
   predictionHistory: PredictionHistoryEntry[];
   accuracyStats: AccuracyStats;
   trendData: TrendDataPoint[];
@@ -90,6 +91,7 @@ type StatsCategory = 'overview' | 'trends' | 'conditions' | 'performance' | 'roi
 
 const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   onBack,
+  onNavigateToHome,
   predictionHistory,
   accuracyStats,
   trendData,
@@ -509,7 +511,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BackHeader title="統計分析" onBack={onBack} />
+      <BackHeaderWithHome title="統計分析" onBack={onBack} onHome={onNavigateToHome || (() => {})} />
       
       <ResponsiveContainer maxWidth="mobile" padding="md">
         {/* 期間選択 */}

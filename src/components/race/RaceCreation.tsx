@@ -5,6 +5,8 @@ import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/co
 import { BackHeader } from '@/components/common/MobileHeader';
 import { DataInputModal } from './DataInputModal';
 import { ManualHorseEntry } from './ManualHorseEntry';
+import { DistanceSelector } from './DistanceSelector';
+import { RaceNumberSelector } from './RaceNumberSelector';
 
 interface RaceCreationProps {
   onBack: () => void;
@@ -166,34 +168,19 @@ export const RaceCreation: React.FC<RaceCreationProps> = ({
             </div>
             
             <FlexLayout direction="row" gap="md">
-              {/* レース番号 */}
+              {/* レース番号選択 */}
               <div className="flex-1">
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">
-                  レース番号
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="12"
+                <RaceNumberSelector
                   value={raceData.raceNumber}
-                  onChange={(e) => handleInputChange('raceNumber', parseInt(e.target.value))}
-                  className="w-full min-h-touch px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(raceNumber) => handleInputChange('raceNumber', raceNumber)}
                 />
               </div>
               
-              {/* 距離 */}
+              {/* 距離選択 */}
               <div className="flex-1">
-                <label className="block text-responsive-sm font-medium text-gray-700 mb-2">
-                  距離 (m)
-                </label>
-                <input
-                  type="number"
-                  min="1000"
-                  max="4000"
-                  step="100"
+                <DistanceSelector
                   value={raceData.distance}
-                  onChange={(e) => handleInputChange('distance', parseInt(e.target.value))}
-                  className="w-full min-h-touch px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(distance) => handleInputChange('distance', distance)}
                 />
               </div>
             </FlexLayout>

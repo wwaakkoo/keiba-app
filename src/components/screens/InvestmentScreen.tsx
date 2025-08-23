@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
+import { Plus, TrendingUp, DollarSign, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, ResponsiveGrid, FlexLayout } from '@/components/common/ResponsiveContainer';
+import { BackHeaderWithHome } from '@/components/common/MobileHeader';
 import { InvestmentManager } from '@/components/investment/InvestmentManager';
 import { InvestmentList } from '@/components/investment/InvestmentList';
 import { PredictionSelector } from '@/components/investment/PredictionSelector';
@@ -21,7 +22,7 @@ interface InvestmentScreenProps {
 
 export const InvestmentScreen: React.FC<InvestmentScreenProps> = ({
   onBack,
-  onNavigateToHome
+  onNavigateToHome = () => {}
   // raceId,
   // predictionId,
   // venue,
@@ -334,19 +335,11 @@ export const InvestmentScreen: React.FC<InvestmentScreenProps> = ({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <FlexLayout direction="row" align="center" gap="md">
-          <TouchOptimizedButton
-            onClick={onBack}
-            variant="ghost"
-            size="sm"
-            icon={ArrowLeft}
-          >
-            <span className="sr-only">戻る</span>
-          </TouchOptimizedButton>
-          <h1 className="text-responsive-lg font-bold">💰 投資管理</h1>
-        </FlexLayout>
-      </div>
+      <BackHeaderWithHome
+        title="💰 投資管理"
+        onBack={onBack}
+        onHome={onNavigateToHome}
+      />
 
       {/* タブナビゲーション */}
       <div className="bg-white border-b border-gray-200 px-4">
