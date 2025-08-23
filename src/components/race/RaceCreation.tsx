@@ -28,7 +28,7 @@ export const RaceCreation: React.FC<RaceCreationProps> = ({
     distance: 1600,
     surface: 'turf',
     condition: 'good',
-    horses: []
+    horses: [] as any[]
   });
 
   const [showDataInput, setShowDataInput] = useState(false);

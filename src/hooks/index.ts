@@ -1,6 +1,6 @@
 // カスタムフックのエクスポート
 export { useDataManager } from './useDataManager';
-export { useGestures } from './useGestures';
+export { useSwipeGesture, usePinchGesture, useLongPress } from './useGestures';
 
 // オフライン・同期関連
 export { useOnlineStatus } from './useOnlineStatus';

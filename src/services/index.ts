@@ -1,6 +1,6 @@
 // サービスのエクスポート
-export { dataParsingService } from './dataParsingService';
-export { predictionService } from './predictionService';
+export * from './dataParsingService';
+export * from './predictionService';
 export * from './predictionInvestmentService';
 
 // データベース・リポジトリ

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, X, Save, AlertCircle } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
-import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
+import { ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { validateHorseData, ValidationResult } from '@/services/dataParsingService';
 
 interface HorseFormData {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, TrendingUp, Trophy, AlertCircle, Target, Trash2 } from 'lucide-react';
+import { ArrowLeft, Calendar, TrendingUp, AlertCircle, Target, Trash2 } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { predictionRepository } from '@/services/repositories/PredictionRepository';
@@ -83,7 +83,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   };
 
   // 投資記録の結果を更新する関数
-  const updateInvestmentResults = async (predictionId: string, actualRanking: number[], isCorrect: boolean) => {
+  const updateInvestmentResults = async (predictionId: string, actualRanking: number[], _isCorrect: boolean) => {
     try {
       console.log('🔍 投資記録更新開始:', { predictionId, actualRanking, raceId: selectedPrediction?.raceId });
       
@@ -309,7 +309,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                       {prediction.accuracy === undefined && (
                         <TouchOptimizedButton
                           onClick={() => handleResultInput(prediction)}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           icon={Target}
                         >
@@ -356,9 +356,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                         {prediction.actualRanking.slice(0, 3).map((horseNumber, idx) => {
                           // 馬番から馬名を取得
                           const horse = prediction.predictions?.find(p => 
-                            (p.horse?.number === horseNumber) || 
-                            (p.number === horseNumber) ||
-                            (p.name && p.number === horseNumber)
+                            (p.horse?.number === horseNumber)
                           );
                           
                           // デバッグログ（問題解決後に削除可）
@@ -370,7 +368,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                             });
                           }
                           
-                          const horseName = horse?.horse?.name || horse?.name || '不明';
+                          const horseName = horse?.horse?.name || '不明';
                           
                           return (
                             <div
@@ -464,9 +462,8 @@ const ResultInputModal: React.FC<ResultInputModalProps> = ({
       // パターン1: p.horse.number
       if (p.horse && p.horse.number) return p.horse.number;
       // パターン2: p.number
-      if (p.number) return p.number;
-      // パターン3: pが直接馬データの場合
-      if (p.name && p.number) return p.number;
+      if (p.horse?.number) return p.horse.number;
+      // パターン3: pが直接馬データの場合 - これは使わない
       return null;
     }).filter(Boolean);
     
@@ -519,7 +516,7 @@ const ResultInputModal: React.FC<ResultInputModalProps> = ({
         <FlexLayout direction="row" gap="md">
           <TouchOptimizedButton
             onClick={onClose}
-            variant="outline"
+            variant="secondary"
             className="flex-1"
           >
             キャンセル
@@ -588,7 +585,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
         <FlexLayout direction="row" gap="md">
           <TouchOptimizedButton
             onClick={onCancel}
-            variant="outline"
+            variant="secondary"
             className="flex-1"
           >
             キャンセル

@@ -3,14 +3,14 @@
  * PWAでのプッシュ通知機能を管理
  */
 
-interface NotificationOptions {
+interface CustomNotificationOptions {
   title: string;
   body: string;
   icon?: string;
   badge?: string;
   tag?: string;
   data?: any;
-  actions?: NotificationAction[];
+  actions?: Array<{ action: string; title: string; icon?: string }>;
   requireInteraction?: boolean;
   silent?: boolean;
 }
@@ -105,7 +105,7 @@ class PushNotificationService {
         // 新しい購読を作成
         subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey)
+          applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey) as BufferSource
         });
       }
 
@@ -162,7 +162,7 @@ class PushNotificationService {
   /**
    * ローカル通知の表示
    */
-  public async showNotification(options: NotificationOptions): Promise<void> {
+  public async showNotification(options: CustomNotificationOptions): Promise<void> {
     try {
       const permission = await this.requestPermission();
       

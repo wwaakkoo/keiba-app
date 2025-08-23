@@ -57,6 +57,8 @@ export class TestDataGenerator {
 
       return {
         id: `test-prediction-${i}`,
+        raceId: `test-race-${i}`,
+        timestamp: date,
         date: date.toISOString().split('T')[0],
         race: {
           venue,
@@ -107,7 +109,7 @@ export class TestDataGenerator {
           odds,
           payout,
           profit,
-          timestamp: pred.date,
+          timestamp: new Date(pred.date),
           raceInfo: {
             venue: pred.race.venue,
             raceNumber: pred.race.raceNumber,

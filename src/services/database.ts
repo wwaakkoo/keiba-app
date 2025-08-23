@@ -2,7 +2,7 @@ import Dexie, { Table } from 'dexie';
 import { Race } from '@/types/race';
 import { PredictionResult } from '@/types/prediction';
 import { Investment } from '@/types/investment';
-import { WorkflowState, WorkflowActivity } from '@/types/workflow';
+import { WorkflowState, WorkflowActivity, WorkflowPriority } from '@/types/workflow';
 
 // アプリケーション設定の型定義
 export interface AppSettings {
@@ -74,16 +74,16 @@ export class KeibaDatabase extends Dexie {
     });
 
     // データベースのフック設定
-    this.races.hook('creating', (primKey, obj, trans) => {
+    this.races.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
     });
 
-    this.races.hook('updating', (modifications, primKey, obj, trans) => {
+    this.races.hook('updating', (modifications: any, _primKey, _obj, _trans) => {
       modifications.updatedAt = new Date();
     });
 
-    this.predictions.hook('creating', (primKey, obj, trans) => {
+    this.predictions.hook('creating', (_primKey, obj, _trans) => {
       if (!obj.timestamp) {
         obj.timestamp = new Date();
       }
@@ -95,27 +95,27 @@ export class KeibaDatabase extends Dexie {
       }
     });
 
-    this.settings.hook('creating', (primKey, obj, trans) => {
+    this.settings.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
     });
 
-    this.settings.hook('updating', (modifications, primKey, obj, trans) => {
+    this.settings.hook('updating', (modifications: any, _primKey, _obj, _trans) => {
       modifications.updatedAt = new Date();
     });
 
     // ワークフロー状態のフック設定
-    this.workflowStates.hook('creating', (primKey, obj, trans) => {
+    this.workflowStates.hook('creating', (_primKey, obj, _trans) => {
       obj.createdAt = new Date();
       obj.updatedAt = new Date();
     });
 
-    this.workflowStates.hook('updating', (modifications, primKey, obj, trans) => {
+    this.workflowStates.hook('updating', (modifications: any, _primKey, _obj, _trans) => {
       modifications.updatedAt = new Date();
     });
 
     // ワークフローアクティビティのフック設定
-    this.workflowActivities.hook('creating', (primKey, obj, trans) => {
+    this.workflowActivities.hook('creating', (_primKey, obj, _trans) => {
       if (!obj.timestamp) {
         obj.timestamp = new Date();
       }
@@ -197,7 +197,7 @@ export class KeibaDatabase extends Dexie {
           predictionCreatedAt: prediction.timestamp,
           resultEnteredAt: prediction.isResultEntered ? prediction.timestamp : undefined,
           investmentIds: [],
-          priority: 'medium' as const,
+          priority: WorkflowPriority.MEDIUM,
           reminderSent: false,
           createdAt: new Date(),
           updatedAt: new Date()

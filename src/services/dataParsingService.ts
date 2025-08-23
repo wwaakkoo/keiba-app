@@ -539,7 +539,7 @@ export const parseNetKeibaData = (text: string, addDebugLog?: (message: string, 
         
       } catch (error) {
         const errorMsg = `ブロック${blockIndex + 1}解析エラー: ${error instanceof Error ? error.message : String(error)}`;
-        log(errorMsg);
+        console.log(errorMsg);
         parseErrors.push(errorMsg);
       }
     });
@@ -569,7 +569,7 @@ export const parseNetKeibaData = (text: string, addDebugLog?: (message: string, 
     
   } catch (error) {
     const errorMsg = `全体解析エラー: ${error instanceof Error ? error.message : String(error)}`;
-    log(errorMsg);
+    console.log(errorMsg);
     
     return {
       horses: [],

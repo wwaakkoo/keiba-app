@@ -108,7 +108,7 @@ export async function registerBackgroundSync(tag: string): Promise<void> {
   if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
     try {
       const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register(tag);
+      await (registration as any).sync?.register(tag);
       console.log('バックグラウンド同期登録:', tag);
     } catch (error) {
       console.error('バックグラウンド同期登録エラー:', error);
@@ -132,7 +132,7 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
           applicationServerKey: urlBase64ToUint8Array(
             // VAPID公開キー（実際の実装では環境変数から取得）
             'BEl62iUYgUivxIkv69yViEuiBIa40HI80NM9f8HnKJuOmqmkFWJ6swkuHVVjyNjeSUYrhzEITHHhrUNBNjNqSBw'
-          )
+          ) as BufferSource
         });
       }
       

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, X, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
-import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
+import { FlexLayout } from '@/components/common/ResponsiveContainer';
 import { parseNetKeibaData, extractRaceInfo } from '@/services/dataParsingService';
 
 interface DataInputModalProps {

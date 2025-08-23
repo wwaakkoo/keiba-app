@@ -27,11 +27,11 @@ interface PredictionEngineProps {
         distance: number;
         time: number;
         surface: 'turf' | 'dirt';
-        condition: string;
+        condition: 'good' | 'slightly_heavy' | 'heavy' | 'bad';
       }>;
     }>;
   };
-  onPredictionSave?: (prediction: any) => void;
+  onPredictionSave?: (predictionData: any) => Promise<string>;
   onInvestmentSave?: (investment: any) => void;
   onViewInvestment?: (predictionId?: string, raceData?: any) => void;
 }
@@ -169,7 +169,7 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
           confidence: rawResult.confidence
         };
         
-        console.log('🎯 メインスレッド変換後スコア詳細:', result.predictions.slice(0, 2).map(p => ({
+        console.log('🎯 メインスレッド変換後スコア詳細:', result.predictions.slice(0, 2).map((p: any) => ({
           name: p.horse.name,
           scores: p.scores,
           speedIndex: p.speedIndex,

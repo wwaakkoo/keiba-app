@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Calculator } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, ResponsiveGrid } from '@/components/common/ResponsiveContainer';
 import { HomeHeader } from '@/components/common/MobileHeader';
@@ -14,7 +14,7 @@ interface HomeScreenProps {
   predictionHistory: any[];
   accuracyStats: any;
   currentRace?: any;
-  onPredictionSave?: (prediction: any) => void;
+  onPredictionSave?: (predictionData: any) => Promise<string>;
   onInvestmentSave?: (investment: any) => void;
 }
 

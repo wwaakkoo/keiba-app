@@ -463,7 +463,7 @@ export const ProfitLossReport: React.FC<ProfitLossReportProps> = ({ onBack }) =>
                         dataKey="totalInvestment"
                         nameKey="betType"
                         label={({ betType, percent }: { betType: string; percent: number }) => 
-                          `${getBetTypeLabel(betType)} ${(percent * 100).toFixed(1)}%`
+                          `${getBetTypeLabel(betType as Investment['betType'])} ${(percent * 100).toFixed(1)}%`
                         }
                       >
                         {betTypeStats.map((_entry, index) => (

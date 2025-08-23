@@ -21,12 +21,12 @@ interface InvestmentScreenProps {
 
 export const InvestmentScreen: React.FC<InvestmentScreenProps> = ({
   onBack,
-  onNavigateToHome,
-  raceId,
-  predictionId,
-  venue,
-  raceNumber,
-  raceDate
+  onNavigateToHome
+  // raceId,
+  // predictionId,
+  // venue,
+  // raceNumber,
+  // raceDate
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'add' | 'history' | 'settings'>('overview');
   const [viewMode, setViewMode] = useState<'tab' | 'prediction_select' | 'add_investment'>('tab');

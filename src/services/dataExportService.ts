@@ -61,7 +61,7 @@ export class DataExportService {
           prediction.id,
           prediction.timestamp.toISOString(),
           prediction.raceId,
-          prediction.predictions?.map(p => p.number).join('-') || '',
+          prediction.predictions?.map(p => p.horse?.number).join('-') || '',
           prediction.confidence || '',
           prediction.actualRanking?.join('-') || '',
           prediction.isCorrect ? '○' : '×',
