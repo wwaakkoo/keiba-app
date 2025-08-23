@@ -141,6 +141,8 @@ function App() {
 
   const handleBackToHome = () => {
     setCurrentView('home');
+    setCurrentRace(null); // 予想結果状態をクリア
+    setCurrentPrediction(null); // 予想状態もクリア
   };
 
   const handleSaveRace = async (raceData: RaceFormData) => {
