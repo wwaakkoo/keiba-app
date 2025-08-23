@@ -16,7 +16,7 @@ import { detailedAnalysisService } from '@/services/detailedAnalysisService';
 import { Investment } from '@/types/investment';
 import { HorseAnalysis, ActualResult } from '@/types/prediction';
 import { shallowCompare } from '@/utils/performanceOptimization';
-import { StrategyRecommendation } from '@/components/investment/StrategyRecommendation';
+// import { StrategyRecommendation } from '@/components/investment/StrategyRecommendation';
 
 interface PredictionHistoryEntry {
   id: string;
@@ -334,32 +334,30 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-blue-700">3頭中1頭以上3着以内:</span>
-                <span className="font-bold ml-2">{(detailedStats.hitPatterns.any1.rate * 100).toFixed(1)}%</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.top3Coverage.any1 / (detailedStats.overview.totalRaces || 1) * 100).toFixed(1)}%</span>
               </div>
               <div>
                 <span className="text-blue-700">3頭中2頭以上3着以内:</span>
-                <span className="font-bold ml-2">{(detailedStats.hitPatterns.any2.rate * 100).toFixed(1)}%</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.top3Coverage.any2 / (detailedStats.overview.totalRaces || 1) * 100).toFixed(1)}%</span>
               </div>
               <div>
                 <span className="text-blue-700">3頭すべて3着以内:</span>
-                <span className="font-bold ml-2">{(detailedStats.hitPatterns.all3.rate * 100).toFixed(1)}%</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.top3Coverage.all3 / (detailedStats.overview.totalRaces || 1) * 100).toFixed(1)}%</span>
               </div>
               <div>
                 <span className="text-blue-700">1位的中率:</span>
-                <span className="font-bold ml-2">{(detailedStats.hitPatterns.first.rate * 100).toFixed(1)}%</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.exactFirst / (detailedStats.overview.totalRaces || 1) * 100).toFixed(1)}%</span>
               </div>
             </div>
           </div>
 
-          <StrategyRecommendation
-            prediction={mockPrediction}
-            availableOdds={mockOdds}
-            onStrategySelect={(strategy) => {
-              console.log('選択された戦略:', strategy);
-              // 実際の実装では投資記録作成画面に遷移
-              alert(`${strategy.name}が選択されました。投資記録作成機能は開発中です。`);
-            }}
-          />
+          <div className="p-4 bg-yellow-50 rounded-lg text-center">
+            <h4 className="font-semibold text-yellow-800 mb-2">🚧 開発中</h4>
+            <p className="text-sm text-yellow-700">
+              統計連動投資戦略機能は現在開発中です。<br/>
+              次回のアップデートでご利用いただけます。
+            </p>
+          </div>
         </ResponsiveCard>
       </div>
     );

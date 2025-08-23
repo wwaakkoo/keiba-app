@@ -93,6 +93,33 @@ export interface PayoutData {
   odds: number;
 }
 
+// 馬データの型定義
+export interface HorseData {
+  name: string;
+  number: number;
+  jockey: string;
+  popularity: number;
+  odds: number | null;
+  pastRaces: {
+    rank: number;
+    distance: number;
+    time: number;
+    surface: 'turf' | 'dirt';
+    condition: 'good' | 'slightly_heavy' | 'heavy' | 'bad';
+  }[];
+  confidence?: number;
+  speedIndex?: number;
+  recentForm?: 'excellent' | 'good' | 'fair' | 'poor';
+}
+
+// レース条件の型定義
+export interface RaceConditions {
+  surface?: 'turf' | 'dirt';
+  distance?: number;
+  condition?: 'good' | 'slightly_heavy' | 'heavy' | 'bad';
+  weather?: string;
+}
+
 // 統計データの型定義
 export interface AccuracyStats {
   totalPredictions: number;
