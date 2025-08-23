@@ -60,30 +60,27 @@ export const validateHorseData = (horse: any): ValidationResult => {
 };
 
 // レース情報の抽出（テキストから基本的なレース情報を抽出）
+/**
+ * netkeibaデータからレース情報を抽出
+ * 注意: 現在のnetkeibaデータには対象レース自体の情報（競馬場・距離・馬場）は含まれていません
+ * 含まれているのは各馬の過去成績の情報のみです
+ * そのため、レース条件は全てユーザーが手動で設定する必要があります
+ */
 export const extractRaceInfo = (text: string): Partial<any> => {
   const raceInfo: any = {};
 
-  // 距離の抽出
-  const distanceMatch = text.match(/(\d{4})m/);
-  if (distanceMatch) {
-    raceInfo.distance = parseInt(distanceMatch[1]);
-  }
+  // 現在のnetkeibaデータ形式では、対象レースの条件情報は含まれていない
+  // 含まれているのは各馬の過去成績のみ
+  // 
+  // 例：
+  // 2022.12.25 中山 1 芝1600 良 1:34.5  ← これは過去成績
+  // 2022.11.27 東京 3 芝1400 良 1:21.2  ← これも過去成績
+  //
+  // 対象レースの情報（競馬場・距離・馬場・条件）は手動設定が必要
 
-  // 馬場の抽出
-  if (text.includes('芝')) {
-    raceInfo.surface = 'turf';
-  } else if (text.includes('ダート') || text.includes('ダ')) {
-    raceInfo.surface = 'dirt';
-  }
-
-  // 競馬場の抽出
-  const venues = ['東京', '中山', '阪神', '京都', '中京', '新潟', '福島', '小倉', '札幌', '函館'];
-  for (const venue of venues) {
-    if (text.includes(venue)) {
-      raceInfo.venue = venue;
-      break;
-    }
-  }
+  console.log('🏁 extractRaceInfo - netkeibaデータからはレース条件を抽出しません');
+  console.log('🏁 extractRaceInfo - 理由: 過去成績の情報と区別できないため');
+  console.log('🏁 extractRaceInfo - 競馬場・距離・馬場・条件は手動で設定してください');
 
   return raceInfo;
 };

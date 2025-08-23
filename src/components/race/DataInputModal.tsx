@@ -83,6 +83,8 @@ export const DataInputModal: React.FC<DataInputModalProps> = ({
     if (parseResult && parseResult.horses.length > 0) {
       // レース情報も抽出して渡す
       const raceInfo = extractRaceInfo(inputData);
+      console.log('DataInputModal - 抽出されたレース情報:', raceInfo);
+      console.log('DataInputModal - 入力データ:', inputData.substring(0, 200) + '...');
       onDataParsed(parseResult.horses, raceInfo);
     }
   };
@@ -156,6 +158,11 @@ C.ルメール
                   >
                     サンプル
                   </TouchOptimizedButton>
+                </FlexLayout>
+                <p className="text-xs text-gray-500 mb-2">
+                  ※ レース条件（競馬場・距離・馬場・条件）は別途手動で設定してください<br/>
+                  　 netkeibaデータには各馬の過去成績のみが含まれています
+                </p>
                 </FlexLayout>
                 
                 <textarea

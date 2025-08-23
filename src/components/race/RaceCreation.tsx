@@ -50,19 +50,22 @@ export const RaceCreation: React.FC<RaceCreationProps> = ({
   };
 
   const handleDataParsed = (horses: any[], raceInfo?: any) => {
-    // レース情報がある場合は自動設定
-    if (raceInfo) {
-      setRaceData(prev => ({
-        ...prev,
-        ...raceInfo,
-        horses: [...prev.horses, ...horses]
-      }));
-    } else {
-      setRaceData(prev => ({
-        ...prev,
-        horses: [...prev.horses, ...horses]
-      }));
+    console.log('🏁 RaceCreation - handleDataParsed 呼び出し');
+    console.log('🏁 RaceCreation - 受信したレース情報:', raceInfo);
+    console.log('🏁 RaceCreation - 受信した馬データ数:', horses.length);
+    
+    // 現在のnetkeibaデータ形式では、レース条件情報は含まれていない
+    // 馬データのみを追加し、レース条件は手動設定とする
+    if (raceInfo && Object.keys(raceInfo).length > 0) {
+      console.log('🏁 RaceCreation - レース情報を受信しましたが、現在は使用しません:', raceInfo);
+      console.log('🏁 RaceCreation - 理由: netkeibaデータには対象レースの条件が含まれていないため');
     }
+    
+    console.log('🏁 RaceCreation - 馬データのみ追加、レース条件は手動設定');
+    setRaceData(prev => ({
+      ...prev,
+      horses: [...prev.horses, ...horses]
+    }));
     setShowDataInput(false);
   };
 
