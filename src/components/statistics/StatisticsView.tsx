@@ -9,12 +9,14 @@ import { HitPatternAnalysis } from './HitPatternAnalysis';
 import { TrendAnalysis } from './TrendAnalysis';
 import { PredictionInvestmentAnalysis } from './PredictionInvestmentAnalysis';
 import { DetailedStatisticsView } from './DetailedStatisticsView';
+import { PopularityAnalysisChart } from './PopularityAnalysisChart';
 import { performanceAnalysisService } from '@/services/performanceAnalysisService';
 import { DetailedStatistics } from '@/services/detailedStatisticsService';
 import { investmentPerformanceService } from '@/services/investmentPerformanceService';
 import { detailedAnalysisService } from '@/services/detailedAnalysisService';
+import { popularityAnalysisService } from '@/services/popularityAnalysisService';
 import { Investment } from '@/types/investment';
-import { HorseAnalysis, ActualResult } from '@/types/prediction';
+import { HorseAnalysis, ActualResult, PredictionResult } from '@/types/prediction';
 import { shallowCompare } from '@/utils/performanceOptimization';
 // import { StrategyRecommendation } from '@/components/investment/StrategyRecommendation';
 
@@ -88,7 +90,7 @@ interface StatisticsViewProps {
 }
 
 type StatsPeriod = 'all' | 'thisMonth' | 'lastMonth';
-type StatsCategory = 'overview' | 'trends' | 'conditions' | 'performance' | 'roi' | 'patterns' | 'advanced' | 'prediction-investment' | 'detailed' | 'strategy';
+type StatsCategory = 'overview' | 'trends' | 'conditions' | 'performance' | 'roi' | 'patterns' | 'advanced' | 'prediction-investment' | 'detailed' | 'strategy' | 'popularity';
 
 const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   onBack,
@@ -111,7 +113,10 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
         hitPatterns: null,
         performanceMetrics: null,
         suggestions: [],
-        trendAnalysisData: null
+        trendAnalysisData: null,
+        popularityAnalysis: null,
+        oddsAnalysis: null,
+        rankAnalysis: null
       };
     }
 
@@ -134,12 +139,29 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
     // トレンド分析
     const trendData = detailedAnalysisService.analyzeTrends(predictionHistory as any[], investments);
 
+    // 人気分析データ
+    const popularityData = popularityAnalysisService.analyzeByPopularity(
+      predictionHistory as unknown as PredictionResult[],
+      investments
+    );
+    const oddsData = popularityAnalysisService.analyzeByOdds(
+      predictionHistory as unknown as PredictionResult[],
+      investments
+    );
+    const rankData = popularityAnalysisService.analyzeByPredictionRank(
+      predictionHistory as unknown as PredictionResult[],
+      investments
+    );
+
     return {
       roiAnalysis: roiData,
       hitPatterns: patternData,
       performanceMetrics: metricsData,
       suggestions: suggestionData,
-      trendAnalysisData: trendData
+      trendAnalysisData: trendData,
+      popularityAnalysis: popularityData,
+      oddsAnalysis: oddsData,
+      rankAnalysis: rankData
     };
   }, [investments, predictionHistory]);
 
@@ -149,7 +171,10 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
     hitPatterns: currentHitPatterns,
     performanceMetrics: currentPerformanceMetrics,
     suggestions: currentSuggestions,
-    trendAnalysisData: currentTrendAnalysisData
+    trendAnalysisData: currentTrendAnalysisData,
+    popularityAnalysis: currentPopularityAnalysis,
+    oddsAnalysis: currentOddsAnalysis,
+    rankAnalysis: currentRankAnalysis
   } = analysisData;
 
   // メモ化されたオプション
@@ -161,6 +186,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
 
   const categoryOptions = useMemo(() => [
     { value: 'overview' as StatsCategory, label: '概要', icon: BarChart3 },
+    { value: 'popularity' as StatsCategory, label: '人気・オッズ分析', icon: Target },
     { value: 'detailed' as StatsCategory, label: '詳細統計', icon: Target },
     { value: 'strategy' as StatsCategory, label: '投資戦略', icon: Lightbulb },
     { value: 'trends' as StatsCategory, label: 'トレンド', icon: TrendingUp },
@@ -593,6 +619,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   const renderContent = () => {
     switch (selectedCategory) {
       case 'overview': return renderOverview();
+      case 'popularity': return renderPopularityAnalysis();
       case 'detailed': return renderDetailedStatistics();
       case 'strategy': return renderInvestmentStrategy();
       case 'trends': return renderTrends();
@@ -604,6 +631,25 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
       case 'advanced': return renderAdvancedAnalysis();
       default: return renderOverview();
     }
+  };
+
+  const renderPopularityAnalysis = () => {
+    if (!currentPopularityAnalysis || !currentOddsAnalysis || !currentRankAnalysis) {
+      return (
+        <ResponsiveCard className="p-8 text-center">
+          <p className="text-gray-600">人気・オッズ分析を行うためのデータが不足しています。</p>
+          <p className="text-sm text-gray-500 mt-2">予想と投資の実績データを蓄積してください。</p>
+        </ResponsiveCard>
+      );
+    }
+
+    return (
+      <PopularityAnalysisChart
+        popularityData={currentPopularityAnalysis}
+        oddsData={currentOddsAnalysis}
+        rankData={currentRankAnalysis}
+      />
+    );
   };
 
   return (
