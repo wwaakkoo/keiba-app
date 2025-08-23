@@ -377,14 +377,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                             (p.horse?.number === horseNumber)
                           );
                           
-                          // デバッグログは開発環境でのみ出力
-                          if (!horse && import.meta.env.DEV) {
-                            console.log(`🔍 馬が見つかりません - 馬番:${horseNumber}`, {
-                              predictions: prediction.predictions,
-                              predictionsCount: prediction.predictions?.length,
-                              firstPrediction: prediction.predictions?.[0]
-                            });
-                          }
+                          // デバッグログは削除（本番環境最適化）
                           
                           const horseName = horse?.horse?.name || '不明';
                           
