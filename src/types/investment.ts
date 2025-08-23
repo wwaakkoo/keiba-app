@@ -39,6 +39,8 @@ export interface Investment {
   strategyRationale?: string;
   /** AI予想期待収益 */
   expectedReturn?: number;
+  /** シミュレーション投資かどうか */
+  isSimulated?: boolean;
 }
 
 // 投資統計の型定義
