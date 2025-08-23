@@ -182,16 +182,18 @@ function App() {
     console.log('予想保存:', prediction);
     
     try {
-      // 現在のレース情報を取得（currentRaceから）
-      const raceInfo = currentRace || {
-        venue: prediction.raceInfo?.venue,
-        raceNumber: prediction.raceInfo?.raceNumber || 1,
-        distance: prediction.raceInfo?.distance || 1600,
-        surface: prediction.raceInfo?.surface || 'turf',
-        date: prediction.raceInfo?.date || new Date().toISOString().split('T')[0]
+      // レース情報を取得（prediction.raceInfoを優先、currentRaceは補完用）
+      const raceInfo = {
+        venue: prediction.raceInfo?.venue || currentRace?.venue || '未設定',
+        raceNumber: prediction.raceInfo?.raceNumber || currentRace?.raceNumber || 1,
+        distance: prediction.raceInfo?.distance || currentRace?.distance || 1600,
+        surface: prediction.raceInfo?.surface || currentRace?.surface || 'turf',
+        date: prediction.raceInfo?.date || currentRace?.date || new Date().toISOString().split('T')[0]
       };
       
       console.log('🔍 予想保存時のレース情報:', raceInfo);
+      console.log('🔍 prediction.raceInfo:', prediction.raceInfo);
+      console.log('🔍 currentRace:', currentRace);
       
       // PredictionResult型に合わせたデータ構造で保存
       const predictionData = {
@@ -199,11 +201,11 @@ function App() {
         timestamp: new Date(),
         date: raceInfo.date || new Date().toISOString().split('T')[0],
         race: {
-          venue: raceInfo.venue || '未設定',
-          raceNumber: raceInfo.raceNumber || 1,
-          distance: raceInfo.distance || 1600,
-          surface: raceInfo.surface || 'turf',
-          raceDate: raceInfo.date || new Date().toISOString().split('T')[0]
+          venue: raceInfo.venue,
+          raceNumber: raceInfo.raceNumber,
+          distance: raceInfo.distance,
+          surface: raceInfo.surface,
+          raceDate: raceInfo.date
         },
         predictions: prediction.predictions || [],
         horseCount: prediction.predictions?.length || 0,

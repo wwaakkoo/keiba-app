@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Settings, Bell, Shield, Download, Trash2, Database } from 'lucide-react';
+import { ArrowLeft, Settings, Bell, Shield, Trash2, Database, Wrench, CheckCircle } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { DataExportImport } from '@/components/common/DataExportImport';
+import { dataMigrationService } from '@/services/dataMigration';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -12,6 +13,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onBack
 }) => {
   const [showDataManager, setShowDataManager] = useState(false);
+  const [isFixingData, setIsFixingData] = useState(false);
+  const [fixResult, setFixResult] = useState<string | null>(null);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
@@ -64,6 +67,48 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               >
                 データのエクスポート・インポート
               </TouchOptimizedButton>
+              
+              <TouchOptimizedButton
+                onClick={async () => {
+                  if (confirm('競馬場データの修正を実行しますか？\n\n既存の予想・投資記録で競馬場が正しく表示されていない問題を修正します。')) {
+                    setIsFixingData(true);
+                    setFixResult(null);
+                    try {
+                      const result = await dataMigrationService.runFullMigration();
+                      setFixResult(result.summary);
+                      alert('データ修正が完了しました！\n\n' + result.summary);
+                    } catch (error) {
+                      console.error('データ修正エラー:', error);
+                      alert('データ修正に失敗しました。\n\nエラー: ' + (error as Error).message);
+                    } finally {
+                      setIsFixingData(false);
+                    }
+                  }
+                }}
+                variant="secondary"
+                icon={isFixingData ? undefined : Wrench}
+                fullWidth
+                disabled={isFixingData}
+              >
+                {isFixingData ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span>競馬場データを修正中...</span>
+                  </div>
+                ) : (
+                  '競馬場データを修正'
+                )}
+              </TouchOptimizedButton>
+              
+              {fixResult && (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle className="text-green-600" size={16} />
+                    <span className="text-sm font-medium text-green-800">修正完了</span>
+                  </div>
+                  <pre className="text-xs text-green-700 whitespace-pre-wrap">{fixResult}</pre>
+                </div>
+              )}
               <TouchOptimizedButton
                 onClick={async () => {
                   if (confirm('全てのデータを削除しますか？この操作は取り消せません。')) {
