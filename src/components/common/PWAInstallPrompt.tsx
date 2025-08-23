@@ -29,7 +29,9 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className = 
         setIsVisible(true);
       }, 3000);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [isInstallable, isInstalled, isStandalone, isDismissed]);
 

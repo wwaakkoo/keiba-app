@@ -63,7 +63,9 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
 
     if (autoRefresh) {
       const interval = setInterval(updateSyncStatus, 30000); // 30秒ごと
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+      };
     }
   }, [autoRefresh]);
 
@@ -245,7 +247,9 @@ export const CompactSyncStatus: React.FC<{ className?: string }> = ({
 
     updateStatus();
     const interval = setInterval(updateStatus, 30000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const hasIssues = !isOnline || syncStatus.pendingChanges > 0 || syncStatus.conflictCount > 0;

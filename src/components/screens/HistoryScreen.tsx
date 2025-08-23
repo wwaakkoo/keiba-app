@@ -44,6 +44,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
       setPredictions(data);
     } catch (error) {
       console.error('予想履歴取得エラー:', error);
+      // ユーザーにエラーを表示する場合は、ここでsetErrorStateなどを呼ぶ
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +84,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
       alert(isCorrect ? '🎉 予想的中！投資記録も更新されました' : '📊 結果を保存しました');
     } catch (error) {
       console.error('結果保存エラー:', error);
-      alert('結果の保存に失敗しました');
+      alert('結果の保存に失敗しました。もう一度お試しください。');
     }
   };
 
@@ -227,7 +228,7 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
       console.log('予想履歴を削除しました');
     } catch (error) {
       console.error('削除エラー:', error);
-      alert('削除に失敗しました');
+      alert('削除に失敗しました。もう一度お試しください。');
     }
   };
 
@@ -376,8 +377,8 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                             (p.horse?.number === horseNumber)
                           );
                           
-                          // デバッグログ（問題解決後に削除可）
-                          if (!horse) {
+                          // デバッグログは開発環境でのみ出力
+                          if (!horse && process.env.NODE_ENV === 'development') {
                             console.log(`🔍 馬が見つかりません - 馬番:${horseNumber}`, {
                               predictions: prediction.predictions,
                               predictionsCount: prediction.predictions?.length,
@@ -480,8 +481,7 @@ const ResultInputModal: React.FC<ResultInputModalProps> = ({
     onSave(validRanking);
   };
 
-  // デバッグ用ログ（必要に応じて）
-  // console.log('ResultInputModal - prediction:', prediction);
+  // デバッグ用ログは削除済み
   
   // 馬番の取得（複数のパターンに対応）
   const availableNumbers = React.useMemo(() => {
@@ -589,7 +589,7 @@ const PredictionDetailModal: React.FC<PredictionDetailModalProps> = ({
       setIsEditing(false);
     } catch (error) {
       console.error('予想更新エラー:', error);
-      alert('予想の更新に失敗しました');
+      alert('予想の更新に失敗しました。もう一度お試しください。');
     } finally {
       setIsSaving(false);
     }

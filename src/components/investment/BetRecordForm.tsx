@@ -82,7 +82,9 @@ export const BetRecordForm: React.FC<BetRecordFormProps> = ({
     };
 
     const timeoutId = setTimeout(checkLimits, 500); // デバウンス
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [formData.amount]);
 
   const selectedBetType = BET_TYPES.find(bt => bt.value === formData.betType);

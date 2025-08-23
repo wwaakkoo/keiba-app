@@ -109,7 +109,9 @@ export const useOfflineSync = () => {
       }
     }, 24 * 60 * 60 * 1000); // 24時間ごと
 
-    return () => clearInterval(cleanupInterval);
+    return () => {
+      clearInterval(cleanupInterval);
+    };
   }, []);
 
   const status: OfflineSyncStatus = {

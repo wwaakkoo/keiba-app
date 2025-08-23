@@ -27,7 +27,9 @@ export const RiskAlerts: React.FC<RiskAlertsProps> = ({
     loadAlerts();
     // 定期的にアラートを更新（5分間隔）
     const interval = setInterval(loadAlerts, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const loadAlerts = async () => {

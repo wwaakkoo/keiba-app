@@ -36,7 +36,9 @@ export const CustomInstallPrompt: React.FC<CustomInstallPromptProps> = ({
         setIsVisible(true);
       }, 10000); // 10秒後
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [isInstallable, isInstalled, isStandalone, isDismissed]);
 

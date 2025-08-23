@@ -87,21 +87,23 @@ export const PredictionResults: React.FC<PredictionResultsProps> = ({
     );
   }
 
-  // デバッグ: コンポーネントがレンダリングされているか確認
-  console.log('🔍 PredictionResults受取データ構造確認:', predictions.slice(0, 2));
-  console.log('🎯 スコア詳細確認:', predictions.slice(0, 2).map(p => ({
-    name: p.horse?.name,
-    scores: p.scores,
-    speedIndex: p.speedIndex,
-    recentForm: p.recentForm,
-    confidence: p.confidence
-  })));
-  console.log('PredictionResults レンダリング:', {
-    predictionsCount: predictions.length,
-    selectedHorse,
-    viewMode,
-    firstHorse: predictions[0]?.horse?.name
-  });
+  // デバッグログは開発環境でのみ出力
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 PredictionResults受取データ構造確認:', predictions.slice(0, 2));
+    console.log('🎯 スコア詳細確認:', predictions.slice(0, 2).map(p => ({
+      name: p.horse?.name,
+      scores: p.scores,
+      speedIndex: p.speedIndex,
+      recentForm: p.recentForm,
+      confidence: p.confidence
+    })));
+    console.log('PredictionResults レンダリング:', {
+      predictionsCount: predictions.length,
+      selectedHorse,
+      viewMode,
+      firstHorse: predictions[0]?.horse?.name
+    });
+  }
 
   return (
     <div className="space-y-4">
@@ -286,7 +288,9 @@ export const PredictionResults: React.FC<PredictionResultsProps> = ({
                 selectedHorse === index ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
               }`}
               onClick={() => {
-                console.log('🐎 馬をクリック:', horse.horse.name, 'index:', index, '現在の選択:', selectedHorse);
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('🐎 馬をクリック:', horse.horse.name, 'index:', index, '現在の選択:', selectedHorse);
+                }
                 setSelectedHorse(selectedHorse === index ? null : index);
               }}
             >
