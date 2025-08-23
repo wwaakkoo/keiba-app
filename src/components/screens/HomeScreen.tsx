@@ -1,10 +1,10 @@
-import React from 'react';
-import { Plus, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, RefreshCw, Brain, Calculator } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, ResponsiveGrid } from '@/components/common/ResponsiveContainer';
 import { HomeHeader } from '@/components/common/MobileHeader';
 import { PredictionEngine } from '@/components/prediction/PredictionEngine';
-// import { EnhancedPredictionEngine } from '@/components/prediction/EnhancedPredictionEngine';
+import { EnhancedPredictionEngine } from '@/components/prediction/EnhancedPredictionEngine';
 
 interface HomeScreenProps {
   onCreateRace: () => void;
@@ -18,6 +18,8 @@ interface HomeScreenProps {
   onPredictionSave?: (predictionData: any) => Promise<string>;
   onInvestmentSave?: (investment: any) => void;
   onRefreshData?: () => Promise<void>;
+  investments?: any[]; // 投資履歴
+  useEnhancedEngine?: boolean; // 拡張エンジン使用フラグ
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -31,8 +33,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   currentRace,
   onPredictionSave,
   onInvestmentSave,
-  onRefreshData
+  onRefreshData,
+  investments = [],
+  useEnhancedEngine = false
 }) => {
+  const [showEnhancedEngine, setShowEnhancedEngine] = useState(useEnhancedEngine);
   const handleRefresh = async () => {
     if (onRefreshData) {
       try {
@@ -74,12 +79,54 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* 現在のレース予想エンジン */}
         {currentRace && currentRace.horses && currentRace.horses.length > 0 ? (
           <div className="mb-6">
-            <PredictionEngine
-              race={currentRace}
-              onViewInvestment={onViewInvestment}
-              onPredictionSave={onPredictionSave}
-              onInvestmentSave={onInvestmentSave}
-            />
+            {/* エンジン選択トグル */}
+            <ResponsiveCard className="p-3 mb-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">予想エンジン選択:</span>
+                <div className="flex items-center gap-2">
+                  <TouchOptimizedButton
+                    onClick={() => setShowEnhancedEngine(false)}
+                    variant={!showEnhancedEngine ? "primary" : "ghost"}
+                    size="sm"
+                    icon={Calculator}
+                  >
+                    基本エンジン
+                  </TouchOptimizedButton>
+                  <TouchOptimizedButton
+                    onClick={() => setShowEnhancedEngine(true)}
+                    variant={showEnhancedEngine ? "primary" : "ghost"}
+                    size="sm"
+                    icon={Brain}
+                  >
+                    AI統計エンジン
+                  </TouchOptimizedButton>
+                </div>
+              </div>
+              {showEnhancedEngine && predictionHistory.length < 10 && (
+                <div className="mt-2 text-xs text-orange-600">
+                  ⚠️ AI統計エンジンは予想履歴{predictionHistory.length}件で学習中です（推奨: 10件以上）
+                </div>
+              )}
+            </ResponsiveCard>
+            
+            {/* 予想エンジン表示 */}
+            {showEnhancedEngine ? (
+              <EnhancedPredictionEngine
+                race={currentRace}
+                historicalPredictions={predictionHistory}
+                investments={investments}
+                onPredictionSave={onPredictionSave}
+                onInvestmentSave={onInvestmentSave}
+                onViewInvestment={onViewInvestment}
+              />
+            ) : (
+              <PredictionEngine
+                race={currentRace}
+                onViewInvestment={onViewInvestment}
+                onPredictionSave={onPredictionSave}
+                onInvestmentSave={onInvestmentSave}
+              />
+            )}
             
             {/* 新しいレース作成ボタン */}
             <div className="mt-4">
