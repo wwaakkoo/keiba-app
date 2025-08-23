@@ -231,6 +231,10 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
 
   const handleSavePrediction = useMemoizedCallback(async () => {
     if (predictionResult && onPredictionSave) {
+      console.log('🎯 PredictionEngine - 予想保存開始');
+      console.log('🎯 PredictionEngine - race情報:', race);
+      console.log('🎯 PredictionEngine - race.venue:', race.venue);
+      
       const predictionData = {
         raceId: race.id || `${race.venue}_${race.date}_${race.raceNumber}`,
         date: new Date().toISOString(),
@@ -248,7 +252,8 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
         calculatedAt: lastCalculated
       };
       
-      // デバッグログは削除（本番環境最適化）
+      console.log('🎯 PredictionEngine - 作成した予想データ:', predictionData);
+      console.log('🎯 PredictionEngine - raceInfo.venue:', predictionData.raceInfo.venue);
       
       const result = await onPredictionSave(predictionData);
       // predictionIdを受け取る（App.tsxで設定される）

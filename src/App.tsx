@@ -154,19 +154,26 @@ function App() {
   };
 
   const handleSaveRace = async (raceData: RaceFormData) => {
-    console.log('レース保存:', raceData);
+    console.log('🏁 App.tsx - レース保存開始:', raceData);
+    console.log('🏁 App.tsx - 競馬場情報:', raceData.venue);
     
     try {
       // データベースにレースを保存
-      const savedRace = await raceRepository.create({
+      const raceToSave = {
         ...raceData,
         horses: raceData.horses || []
-      });
+      };
       
-      console.log('レース保存完了（DB）:', savedRace);
+      console.log('🏁 App.tsx - DB保存前のデータ:', raceToSave);
+      
+      const savedRace = await raceRepository.create(raceToSave);
+      
+      console.log('🏁 App.tsx - レース保存完了（DB）:', savedRace);
+      console.log('🏁 App.tsx - 保存後の競馬場:', savedRace.venue);
       
       // 現在のレースとして設定
       setCurrentRace(savedRace);
+      console.log('🏁 App.tsx - currentRaceに設定:', savedRace);
       
       // ホーム画面に戻る
       setCurrentView('home');
@@ -179,10 +186,14 @@ function App() {
   };
 
   const handlePredictionSave = async (prediction: PredictionData) => {
-    console.log('予想保存:', prediction);
+    console.log('🎯 App.tsx - 予想保存開始:', prediction);
+    console.log('🎯 App.tsx - prediction.raceId:', prediction.raceId);
     
     try {
       // レース情報を取得（prediction.raceInfoを優先、currentRaceは補完用）
+      console.log('🎯 App.tsx - prediction.raceInfo詳細:', prediction.raceInfo);
+      console.log('🎯 App.tsx - currentRace詳細:', currentRace);
+      
       const raceInfo = {
         venue: prediction.raceInfo?.venue || currentRace?.venue || '未設定',
         raceNumber: prediction.raceInfo?.raceNumber || currentRace?.raceNumber || 1,
@@ -191,9 +202,11 @@ function App() {
         date: prediction.raceInfo?.date || currentRace?.date || new Date().toISOString().split('T')[0]
       };
       
-      console.log('🔍 予想保存時のレース情報:', raceInfo);
-      console.log('🔍 prediction.raceInfo:', prediction.raceInfo);
-      console.log('🔍 currentRace:', currentRace);
+      console.log('🎯 App.tsx - 最終的なレース情報:', raceInfo);
+      console.log('🎯 App.tsx - 競馬場決定過程:');
+      console.log('  - prediction.raceInfo?.venue:', prediction.raceInfo?.venue);
+      console.log('  - currentRace?.venue:', currentRace?.venue);
+      console.log('  - 最終決定:', raceInfo.venue);
       
       // PredictionResult型に合わせたデータ構造で保存
       const predictionData = {

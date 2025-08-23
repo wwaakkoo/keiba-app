@@ -297,6 +297,11 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
               const status = getResultStatus(prediction);
               const topThree = prediction.predictions?.slice(0, 3) || [];
               
+              // 表示時のログ
+              console.log('📈 HistoryScreen - 予想表示:', prediction.id);
+              console.log('📈 HistoryScreen - prediction.race:', prediction.race);
+              console.log('📈 HistoryScreen - 表示する競馬場:', prediction.race?.venue);
+              
               return (
                 <ResponsiveCard key={prediction.id} className="p-4">
                   <FlexLayout direction="row" justify="between" align="start" className="mb-3">

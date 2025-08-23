@@ -38,10 +38,15 @@ export const RaceCreation: React.FC<RaceCreationProps> = ({
   const [editingHorse, setEditingHorse] = useState<{ index: number; horse: any } | null>(null);
 
   const handleInputChange = (field: string, value: any) => {
-    setRaceData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    console.log('🏁 レース情報変更:', field, '=', value);
+    setRaceData(prev => {
+      const newData = {
+        ...prev,
+        [field]: value
+      };
+      console.log('🏁 更新後のレースデータ:', newData);
+      return newData;
+    });
   };
 
   const handleDataParsed = (horses: any[], raceInfo?: any) => {
@@ -117,11 +122,16 @@ export const RaceCreation: React.FC<RaceCreationProps> = ({
       createdAt: new Date().toISOString()
     });
     
-    onSaveRace({
+    const finalRaceData = {
       ...raceData,
       id: `${raceData.venue}_${raceData.date}_${raceData.raceNumber}`,
       createdAt: new Date().toISOString()
-    });
+    };
+    
+    console.log('🏁 レース保存実行:', finalRaceData);
+    console.log('🏁 競馬場情報:', finalRaceData.venue);
+    
+    onSaveRace(finalRaceData);
   };
 
   return (

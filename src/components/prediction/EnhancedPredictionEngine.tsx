@@ -132,6 +132,10 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
   // 予想保存
   const handleSavePrediction = useMemoizedCallback(async () => {
     if (adaptivePredictionResult && onPredictionSave) {
+      console.log('🎯 EnhancedPredictionEngine - 予想保存開始');
+      console.log('🎯 EnhancedPredictionEngine - race情報:', race);
+      console.log('🎯 EnhancedPredictionEngine - race.venue:', race.venue);
+      
       const predictionData = {
         raceId: race.id || `${race.venue}_${race.date}_${race.raceNumber}`,
         date: new Date().toISOString(),
@@ -150,6 +154,9 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
         calculatedAt: lastCalculated,
         engineType: 'enhanced' // 拡張エンジン使用フラグ
       };
+      
+      console.log('🎯 EnhancedPredictionEngine - 作成した予想データ:', predictionData);
+      console.log('🎯 EnhancedPredictionEngine - raceInfo.venue:', predictionData.raceInfo.venue);
       
       const result = await onPredictionSave(predictionData);
       if (typeof result === 'string') {
