@@ -106,7 +106,7 @@ function App() {
   // データ管理フックを使用
   const { 
     predictionHistory, 
- 
+    loadData,
     calculateAccuracyLegacy,
     calculateTrendData,
     calculatePeriodStats,
@@ -139,10 +139,18 @@ function App() {
     setCurrentView('settings');
   };
 
-  const handleBackToHome = () => {
+  const handleBackToHome = async () => {
     setCurrentView('home');
     setCurrentRace(null); // 予想結果状態をクリア
     setCurrentPrediction(null); // 予想状態もクリア
+    
+    // データを最新状態にリフレッシュ
+    try {
+      await loadData();
+      console.log('ホーム画面に戻る際にデータをリフレッシュしました');
+    } catch (error) {
+      console.error('データリフレッシュエラー:', error);
+    }
   };
 
   const handleSaveRace = async (raceData: RaceFormData) => {
@@ -295,6 +303,7 @@ function App() {
             currentRace={currentRace}
             onPredictionSave={handlePredictionSave}
             onInvestmentSave={handleInvestmentSave}
+            onRefreshData={loadData}
           />
         );
       

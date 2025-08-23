@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, ResponsiveGrid } from '@/components/common/ResponsiveContainer';
 import { HomeHeader } from '@/components/common/MobileHeader';
@@ -16,6 +16,7 @@ interface HomeScreenProps {
   currentRace?: any;
   onPredictionSave?: (predictionData: any) => Promise<string>;
   onInvestmentSave?: (investment: any) => void;
+  onRefreshData?: () => Promise<void>;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -28,11 +29,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   accuracyStats,
   currentRace,
   onPredictionSave,
-  onInvestmentSave
+  onInvestmentSave,
+  onRefreshData
 }) => {
+  const handleRefresh = async () => {
+    if (onRefreshData) {
+      try {
+        await onRefreshData();
+        console.log('データをリフレッシュしました');
+      } catch (error) {
+        console.error('データリフレッシュエラー:', error);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      <HomeHeader />
+      <HomeHeader 
+        rightContent={
+          onRefreshData ? (
+            <TouchOptimizedButton
+              onClick={handleRefresh}
+              variant="ghost"
+              size="sm"
+              icon={RefreshCw}
+              haptic
+            >
+              <span className="sr-only">データ更新</span>
+            </TouchOptimizedButton>
+          ) : undefined
+        }
+      />
       
       <ResponsiveContainer maxWidth="mobile" padding="md">
         {/* ヘッダー */}
