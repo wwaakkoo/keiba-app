@@ -184,7 +184,7 @@ function App() {
     try {
       // 現在のレース情報を取得（currentRaceから）
       const raceInfo = currentRace || {
-        venue: prediction.raceInfo?.venue || '東京',
+        venue: prediction.raceInfo?.venue,
         raceNumber: prediction.raceInfo?.raceNumber || 1,
         distance: prediction.raceInfo?.distance || 1600,
         surface: prediction.raceInfo?.surface || 'turf',
@@ -199,7 +199,7 @@ function App() {
         timestamp: new Date(),
         date: raceInfo.date || new Date().toISOString().split('T')[0],
         race: {
-          venue: raceInfo.venue || '東京',
+          venue: raceInfo.venue,
           raceNumber: raceInfo.raceNumber || 1,
           distance: raceInfo.distance || 1600,
           surface: raceInfo.surface || 'turf',

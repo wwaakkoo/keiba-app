@@ -236,7 +236,7 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
         date: new Date().toISOString(),
         raceInfo: {
           date: race.date,
-          venue: race.venue || '東京', // デフォルト値を設定
+          venue: race.venue, // レースの実際の競馬場を使用
           raceNumber: race.raceNumber || 1,
           distance: race.distance || 1600,
           surface: race.surface || 'turf',

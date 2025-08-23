@@ -25,6 +25,20 @@ export interface Investment {
   expectedValue?: number;
   /** リスクレベル */
   riskLevel?: 'low' | 'medium' | 'high';
+  
+  // AI戦略関連プロパティ
+  /** AI推奨戦略が使用されたか */
+  strategyUsed?: boolean;
+  /** 使用された戦略タイプ */
+  strategyType?: 'win' | 'place' | 'exacta' | 'quinella' | 'trifecta' | 'wide';
+  /** 戦略のリスクレベル */
+  strategyRiskLevel?: 'low' | 'medium' | 'high';
+  /** 戦略の確信度 */
+  strategyConfidence?: number;
+  /** 戦略の理由 */
+  strategyRationale?: string;
+  /** AI予想期待収益 */
+  expectedReturn?: number;
 }
 
 // 投資統計の型定義

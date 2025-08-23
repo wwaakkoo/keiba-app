@@ -1,9 +1,11 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { Brain, TrendingUp, Settings, AlertCircle, RefreshCw, DollarSign, Zap } from 'lucide-react';
+import { Brain, TrendingUp, Settings, AlertCircle, RefreshCw, DollarSign, Zap, Target } from 'lucide-react';
 import { ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { PredictionResults } from './PredictionResults';
 import { StatisticalInsights } from './StatisticalInsights';
+import { StrategyRecommendation, InvestmentStrategy } from './StrategyRecommendation';
+import { EnhancedInvestmentModal } from './EnhancedInvestmentModal';
 import { 
   AdaptivePredictionService, 
   AdaptivePredictionInput, 
@@ -62,11 +64,14 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
   const [isCalculating, setIsCalculating] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showInsights, setShowInsights] = useState(true);
+  const [showStrategies, setShowStrategies] = useState(true); // デフォルトで戦略を表示
   const [lastCalculated, setLastCalculated] = useState<Date | null>(null);
   const [lastSavedPrediction, setLastSavedPrediction] = useState<any>(null);
   const [savedPredictionId, setSavedPredictionId] = useState<string | null>(null);
   const [manualWeights, setManualWeights] = useState<AdaptivePredictionWeights | null>(null);
   const [useAdaptiveWeights, setUseAdaptiveWeights] = useState(true);
+  const [selectedStrategy, setSelectedStrategy] = useState<InvestmentStrategy | null>(null);
+  const [showInvestmentModal, setShowInvestmentModal] = useState(false);
 
   // AI予想計算
   const calculateAdaptivePredictions = useCallback(async () => {
@@ -154,12 +159,17 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
     }
   }, [adaptivePredictionResult, onPredictionSave, race, lastCalculated]);
 
-  // 投資記録作成
+  // 投資記録作成（戦略適用）
   const handleCreateInvestment = useMemoizedCallback(() => {
-    if (savedPredictionId && race && onViewInvestment) {
-      onViewInvestment(savedPredictionId, race);
-    }
-  }, [savedPredictionId, race, onViewInvestment]);
+    setSelectedStrategy(null);
+    setShowInvestmentModal(true);
+  }, []);
+
+  // 戦略選択による投資記録作成
+  const handleCreateInvestmentWithStrategy = useMemoizedCallback((strategy: InvestmentStrategy) => {
+    setSelectedStrategy(strategy);
+    setShowInvestmentModal(true);
+  }, []);
 
   // 重み設定変更
   const handleWeightChange = useMemoizedCallback((newWeights: Partial<AdaptivePredictionWeights>) => {
@@ -265,6 +275,17 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
             >
               再計算
             </TouchOptimizedButton>
+            
+            {adaptivePredictionResult && (
+              <TouchOptimizedButton
+                onClick={() => setShowStrategies(!showStrategies)}
+                variant={showStrategies ? "primary" : "ghost"}
+                size="sm"
+                icon={Target}
+              >
+                戦略推奨
+              </TouchOptimizedButton>
+            )}
             
             {adaptivePredictionResult && onPredictionSave && !lastSavedPrediction && (
               <TouchOptimizedButton
@@ -408,7 +429,7 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
             )}
 
             {/* 表示オプション */}
-            <div className="mt-4">
+            <div className="mt-4 space-y-2">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -418,6 +439,17 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
                 />
                 <span className="text-sm text-gray-700">
                   統計分析の詳細を表示
+                </span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={showStrategies}
+                  onChange={(e) => setShowStrategies(e.target.checked)}
+                  className="rounded"
+                />
+                <span className="text-sm text-gray-700">
+                  AI投資戦略推奨を表示
                 </span>
               </label>
             </div>
@@ -454,6 +486,22 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
         />
       )}
 
+      {/* AI投資戦略推奨パネル */}
+      {adaptivePredictionResult && showStrategies && !isCalculating && (
+        <StrategyRecommendation
+          adaptivePrediction={adaptivePredictionResult}
+          historicalPredictions={historicalPredictions}
+          investments={investments}
+          raceInfo={{
+            venue: race.venue,
+            distance: race.distance,
+            surface: race.surface,
+            condition: race.condition
+          }}
+          onCreateInvestment={handleCreateInvestmentWithStrategy}
+        />
+      )}
+
       {/* AI予想結果表示 */}
       {adaptivePredictionResult && !isCalculating && (
         <PredictionResults
@@ -485,6 +533,24 @@ const EnhancedPredictionEngineComponent: React.FC<EnhancedPredictionEngineProps>
             </div>
           </FlexLayout>
         </ResponsiveCard>
+      )}
+
+      {/* 拡張投資記録作成モーダル */}
+      {showInvestmentModal && lastSavedPrediction && (
+        <EnhancedInvestmentModal
+          prediction={lastSavedPrediction}
+          race={race}
+          savedPredictionId={savedPredictionId}
+          onPredictionSave={onPredictionSave}
+          selectedStrategy={selectedStrategy}
+          onClose={() => setShowInvestmentModal(false)}
+          onSave={(investment) => {
+            if (onInvestmentSave) {
+              onInvestmentSave(investment);
+            }
+            setShowInvestmentModal(false);
+          }}
+        />
       )}
     </div>
   );

@@ -73,7 +73,7 @@ export const useDataManager = () => {
             id: prediction.id,
             date: prediction.timestamp.toISOString(),
             race: {
-              venue: race?.venue || '不明',
+              venue: race?.venue,
               raceNumber: race?.raceNumber || 0,
               distance: race?.distance || 0,
               surface: race?.surface || 'turf',

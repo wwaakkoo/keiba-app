@@ -6,6 +6,7 @@ import { BackHeaderWithHome } from '@/components/common/MobileHeader';
 import { InvestmentManager } from '@/components/investment/InvestmentManager';
 import { InvestmentList } from '@/components/investment/InvestmentList';
 import { PredictionSelector } from '@/components/investment/PredictionSelector';
+import { StrategyPerformanceTracker } from '@/components/investment/StrategyPerformanceTracker';
 import { PredictionResult } from '@/types/prediction';
 import { Investment, InvestmentStats } from '@/types/investment';
 import { investmentRepository } from '@/services/repositories/InvestmentRepository';
@@ -29,7 +30,7 @@ export const InvestmentScreen: React.FC<InvestmentScreenProps> = ({
   // raceNumber,
   // raceDate
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'add' | 'history' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'add' | 'history' | 'strategy' | 'settings'>('overview');
   const [viewMode, setViewMode] = useState<'tab' | 'prediction_select' | 'add_investment'>('tab');
   const [selectedPrediction, setSelectedPrediction] = useState<PredictionResult | null>(null);
   
@@ -239,6 +240,18 @@ export const InvestmentScreen: React.FC<InvestmentScreenProps> = ({
             />
           </ResponsiveCard>
         );
+
+      case 'strategy':
+        if (isLoading) {
+          return (
+            <ResponsiveCard className="p-6 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">読み込み中...</p>
+            </ResponsiveCard>
+          );
+        }
+
+        return <StrategyPerformanceTracker investments={investments} />;
         
       case 'settings':
         return (
@@ -348,6 +361,7 @@ export const InvestmentScreen: React.FC<InvestmentScreenProps> = ({
             { key: 'overview', label: '概要', icon: '📊' },
             { key: 'add', label: '追加', icon: '➕' },
             { key: 'history', label: '履歴', icon: '📈' },
+            { key: 'strategy', label: '戦略', icon: '🎯' },
             { key: 'settings', label: '設定', icon: '⚙️' }
           ].map((tab) => (
             <button
