@@ -7,6 +7,7 @@ export interface PredictionRepository {
   findById(id: string): Promise<PredictionResult | null>;
   findByRaceId(raceId: string): Promise<PredictionResult[]>;
   getHistory(limit?: number): Promise<PredictionResult[]>;
+  update(id: string, updates: Partial<PredictionResult>): Promise<void>;
   updateResult(id: string, actualResult: { 
     actualRanking: number[]; 
     accuracy: number; 
@@ -98,6 +99,20 @@ export class PredictionRepositoryImpl implements PredictionRepository {
     } catch (error) {
       console.error('予想結果更新エラー:', error);
       throw new Error('予想結果の更新に失敗しました');
+    }
+  }
+
+  async update(id: string, updates: Partial<PredictionResult>): Promise<void> {
+    try {
+      const existingPrediction = await this.findById(id);
+      if (!existingPrediction) {
+        throw new Error('更新対象の予想が見つかりません');
+      }
+
+      await db.predictions.update(id, updates);
+    } catch (error) {
+      console.error('予想更新エラー:', error);
+      throw new Error('予想の更新に失敗しました');
     }
   }
 

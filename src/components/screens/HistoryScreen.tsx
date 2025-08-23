@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, TrendingUp, AlertCircle, Target, Trash2 } from 'lucide-react';
+import { ArrowLeft, Calendar, TrendingUp, AlertCircle, Target, Trash2, Eye, Edit } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { BackHeaderWithHome } from '@/components/common/MobileHeader';
@@ -29,6 +29,8 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
   const [showResultInput, setShowResultInput] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [predictionToDelete, setPredictionToDelete] = useState<PredictionResult | null>(null);
+  const [showPredictionDetail, setShowPredictionDetail] = useState(false);
+  const [selectedPredictionForDetail, setSelectedPredictionForDetail] = useState<PredictionResult | null>(null);
 
   // 予想データを取得
   useEffect(() => {
@@ -234,6 +236,17 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
     setPredictionToDelete(null);
   };
 
+  // 予想詳細表示のハンドラー
+  const handleViewDetail = (prediction: PredictionResult) => {
+    setSelectedPredictionForDetail(prediction);
+    setShowPredictionDetail(true);
+  };
+
+  const handleCloseDetail = () => {
+    setShowPredictionDetail(false);
+    setSelectedPredictionForDetail(null);
+  };
+
   const getResultStatus = (prediction: PredictionResult) => {
     if (prediction.accuracy !== undefined) {
       return prediction.isCorrect ? 
@@ -301,6 +314,15 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
                     </div>
                     
                     <FlexLayout direction="row" gap="sm">
+                      <TouchOptimizedButton
+                        onClick={() => handleViewDetail(prediction)}
+                        variant="ghost"
+                        size="sm"
+                        icon={Eye}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        詳細
+                      </TouchOptimizedButton>
                       {prediction.accuracy === undefined && (
                         <TouchOptimizedButton
                           onClick={() => handleResultInput(prediction)}
@@ -397,6 +419,21 @@ export const HistoryScreen: React.FC<HistoryScreenProps> = ({
           onClose={() => {
             setShowResultInput(false);
             setSelectedPrediction(null);
+          }}
+        />
+      )}
+
+      {/* 予想詳細モーダル */}
+      {showPredictionDetail && selectedPredictionForDetail && (
+        <PredictionDetailModal
+          prediction={selectedPredictionForDetail}
+          onClose={handleCloseDetail}
+          onUpdate={async (updatedPrediction) => {
+            // 予想データを更新
+            await predictionRepository.update(updatedPrediction.id, updatedPrediction);
+            // データを再読み込み
+            await loadPredictions();
+            handleCloseDetail();
           }}
         />
       )}
@@ -524,6 +561,299 @@ const ResultInputModal: React.FC<ResultInputModalProps> = ({
             保存
           </TouchOptimizedButton>
         </FlexLayout>
+      </div>
+    </div>
+  );
+};
+
+// 予想詳細表示・編集モーダルコンポーネント
+interface PredictionDetailModalProps {
+  prediction: PredictionResult;
+  onClose: () => void;
+  onUpdate: (updatedPrediction: PredictionResult) => Promise<void>;
+}
+
+const PredictionDetailModal: React.FC<PredictionDetailModalProps> = ({
+  prediction,
+  onClose,
+  onUpdate
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedPrediction, setEditedPrediction] = useState<PredictionResult>(prediction);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onUpdate(editedPrediction);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('予想更新エラー:', error);
+      alert('予想の更新に失敗しました');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditedPrediction(prediction);
+    setIsEditing(false);
+  };
+
+  const handleRaceInfoChange = (field: string, value: any) => {
+    setEditedPrediction(prev => ({
+      ...prev,
+      race: {
+        ...prev.race,
+        [field]: value
+      }
+    }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* ヘッダー */}
+        <div className="p-6 border-b border-gray-200">
+          <FlexLayout direction="row" justify="between" align="center">
+            <h3 className="text-xl font-bold text-gray-900">予想詳細</h3>
+            <FlexLayout direction="row" gap="sm">
+              {!isEditing ? (
+                <TouchOptimizedButton
+                  onClick={() => setIsEditing(true)}
+                  variant="secondary"
+                  size="sm"
+                  icon={Edit}
+                >
+                  編集
+                </TouchOptimizedButton>
+              ) : (
+                <>
+                  <TouchOptimizedButton
+                    onClick={handleCancel}
+                    variant="ghost"
+                    size="sm"
+                    disabled={isSaving}
+                  >
+                    キャンセル
+                  </TouchOptimizedButton>
+                  <TouchOptimizedButton
+                    onClick={handleSave}
+                    variant="primary"
+                    size="sm"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? '保存中...' : '保存'}
+                  </TouchOptimizedButton>
+                </>
+              )}
+            </FlexLayout>
+          </FlexLayout>
+        </div>
+
+        {/* コンテンツ */}
+        <div className="p-6 space-y-6">
+          {/* レース情報 */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 mb-4">レース情報</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  競馬場
+                </label>
+                {isEditing ? (
+                  <select
+                    value={editedPrediction.race?.venue || ''}
+                    onChange={(e) => handleRaceInfoChange('venue', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">選択してください</option>
+                    {['札幌', '函館', '福島', '新潟', '東京', '中山', '中京', '京都', '阪神', '小倉'].map(venue => (
+                      <option key={venue} value={venue}>{venue}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="text-gray-900">{editedPrediction.race?.venue || '未設定'}</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  レース番号
+                </label>
+                {isEditing ? (
+                  <input
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={editedPrediction.race?.raceNumber || ''}
+                    onChange={(e) => handleRaceInfoChange('raceNumber', parseInt(e.target.value) || 1)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900">{editedPrediction.race?.raceNumber || '未設定'}R</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  距離
+                </label>
+                {isEditing ? (
+                  <input
+                    type="number"
+                    min="1000"
+                    max="4000"
+                    step="100"
+                    value={editedPrediction.race?.distance || ''}
+                    onChange={(e) => handleRaceInfoChange('distance', parseInt(e.target.value) || 1600)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900">{editedPrediction.race?.distance || '未設定'}m</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  コース
+                </label>
+                {isEditing ? (
+                  <select
+                    value={editedPrediction.race?.surface || 'turf'}
+                    onChange={(e) => handleRaceInfoChange('surface', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="turf">芝</option>
+                    <option value="dirt">ダート</option>
+                  </select>
+                ) : (
+                  <p className="text-gray-900">{editedPrediction.race?.surface === 'turf' ? '芝' : 'ダート'}</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  開催日
+                </label>
+                {isEditing ? (
+                  <input
+                    type="date"
+                    value={editedPrediction.race?.raceDate || ''}
+                    onChange={(e) => handleRaceInfoChange('raceDate', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900">{editedPrediction.race?.raceDate || '未設定'}</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  予想作成日時
+                </label>
+                <p className="text-gray-900">
+                  {new Date(editedPrediction.timestamp).toLocaleString('ja-JP')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 予想結果 */}
+          <div>
+            <h4 className="text-lg font-medium text-gray-900 mb-4">予想結果</h4>
+            <div className="space-y-3">
+              {editedPrediction.predictions?.map((horse, index) => (
+                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                  <FlexLayout direction="row" justify="between" align="center">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {index + 1}位: {horse.horse?.number}番 {horse.horse?.name}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        騎手: {horse.horse?.jockey} | 人気: {horse.horse?.popularity}番人気 | オッズ: {horse.horse?.odds}倍
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-600">総合スコア</div>
+                      <div className="font-bold text-blue-600">{horse.scores?.total || 0}点</div>
+                    </div>
+                  </FlexLayout>
+                  
+                  {/* スコア詳細 */}
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                    <div className="text-center p-2 bg-white rounded">
+                      <div className="font-medium">スピード</div>
+                      <div className="text-blue-600">{horse.scores?.speed || 0}点</div>
+                    </div>
+                    <div className="text-center p-2 bg-white rounded">
+                      <div className="font-medium">調子</div>
+                      <div className="text-green-600">{horse.scores?.recent || 0}点</div>
+                    </div>
+                    <div className="text-center p-2 bg-white rounded">
+                      <div className="font-medium">オッズ</div>
+                      <div className="text-yellow-600">{horse.scores?.odds || 0}点</div>
+                    </div>
+                  </div>
+                </div>
+              )) || (
+                <p className="text-gray-500 text-center py-4">予想データがありません</p>
+              )}
+            </div>
+          </div>
+
+          {/* 実際の結果（入力済みの場合） */}
+          {editedPrediction.actualRanking && (
+            <div>
+              <h4 className="text-lg font-medium text-gray-900 mb-4">実際の結果</h4>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <FlexLayout direction="row" gap="md" wrap>
+                  {editedPrediction.actualRanking.slice(0, 3).map((horseNumber, idx) => {
+                    const horse = editedPrediction.predictions?.find(p => 
+                      p.horse?.number === horseNumber
+                    );
+                    const horseName = horse?.horse?.name || '不明';
+                    
+                    return (
+                      <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg">
+                        <span className="font-medium text-green-800">
+                          {idx + 1}位
+                        </span>
+                        <span className="text-green-700">
+                          {horseNumber}番 {horseName}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </FlexLayout>
+                
+                <div className="mt-3 text-center">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    editedPrediction.isCorrect 
+                      ? 'text-green-800 bg-green-100' 
+                      : 'text-red-800 bg-red-100'
+                  }`}>
+                    {editedPrediction.isCorrect ? '🎉 予想的中' : '📊 予想外れ'}
+                  </span>
+                  <div className="text-sm text-gray-600 mt-1">
+                    精度: {editedPrediction.accuracy}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* フッター */}
+        <div className="p-6 border-t border-gray-200">
+          <TouchOptimizedButton
+            onClick={onClose}
+            variant="secondary"
+            className="w-full"
+          >
+            閉じる
+          </TouchOptimizedButton>
+        </div>
       </div>
     </div>
   );

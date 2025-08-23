@@ -238,17 +238,19 @@ const PredictionEngineComponent: React.FC<PredictionEngineProps> = ({
         date: new Date().toISOString(),
         raceInfo: {
           date: race.date,
-          venue: race.venue,
-          raceNumber: race.raceNumber,
-          distance: race.distance,
-          surface: race.surface,
-          condition: race.condition
+          venue: race.venue || '東京', // デフォルト値を設定
+          raceNumber: race.raceNumber || 1,
+          distance: race.distance || 1600,
+          surface: race.surface || 'turf',
+          condition: race.condition || 'good'
         },
         weights,
         predictions: predictionResult.predictions,
         confidence: predictionResult.confidence,
         calculatedAt: lastCalculated
       };
+      
+      console.log('🔍 PredictionEngine - 予想保存データ:', predictionData.raceInfo);
       
       const result = await onPredictionSave(predictionData);
       // predictionIdを受け取る（App.tsxで設定される）

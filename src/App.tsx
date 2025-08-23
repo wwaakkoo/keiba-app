@@ -182,17 +182,28 @@ function App() {
     console.log('予想保存:', prediction);
     
     try {
+      // 現在のレース情報を取得（currentRaceから）
+      const raceInfo = currentRace || {
+        venue: prediction.raceInfo?.venue || '東京',
+        raceNumber: prediction.raceInfo?.raceNumber || 1,
+        distance: prediction.raceInfo?.distance || 1600,
+        surface: prediction.raceInfo?.surface || 'turf',
+        date: prediction.raceInfo?.date || new Date().toISOString().split('T')[0]
+      };
+      
+      console.log('🔍 予想保存時のレース情報:', raceInfo);
+      
       // PredictionResult型に合わせたデータ構造で保存
       const predictionData = {
         raceId: prediction.raceId,
         timestamp: new Date(),
-        date: prediction.raceInfo?.date || new Date().toISOString().split('T')[0],
+        date: raceInfo.date || new Date().toISOString().split('T')[0],
         race: {
-          venue: prediction.raceInfo?.venue || '',
-          raceNumber: prediction.raceInfo?.raceNumber || 0,
-          distance: prediction.raceInfo?.distance || 0,
-          surface: prediction.raceInfo?.surface || 'turf',
-          raceDate: prediction.raceInfo?.date || new Date().toISOString().split('T')[0]
+          venue: raceInfo.venue || '東京',
+          raceNumber: raceInfo.raceNumber || 1,
+          distance: raceInfo.distance || 1600,
+          surface: raceInfo.surface || 'turf',
+          raceDate: raceInfo.date || new Date().toISOString().split('T')[0]
         },
         predictions: prediction.predictions || [],
         horseCount: prediction.predictions?.length || 0,
