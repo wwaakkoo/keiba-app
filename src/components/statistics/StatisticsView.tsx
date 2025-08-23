@@ -16,6 +16,7 @@ import { detailedAnalysisService } from '@/services/detailedAnalysisService';
 import { Investment } from '@/types/investment';
 import { HorseAnalysis, ActualResult } from '@/types/prediction';
 import { shallowCompare } from '@/utils/performanceOptimization';
+import { StrategyRecommendation } from '@/components/investment/StrategyRecommendation';
 
 interface PredictionHistoryEntry {
   id: string;
@@ -87,7 +88,7 @@ interface StatisticsViewProps {
 }
 
 type StatsPeriod = 'all' | 'thisMonth' | 'lastMonth';
-type StatsCategory = 'overview' | 'trends' | 'conditions' | 'performance' | 'roi' | 'patterns' | 'advanced' | 'prediction-investment' | 'detailed';
+type StatsCategory = 'overview' | 'trends' | 'conditions' | 'performance' | 'roi' | 'patterns' | 'advanced' | 'prediction-investment' | 'detailed' | 'strategy';
 
 const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   onBack,
@@ -161,6 +162,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   const categoryOptions = useMemo(() => [
     { value: 'overview' as StatsCategory, label: '概要', icon: BarChart3 },
     { value: 'detailed' as StatsCategory, label: '詳細統計', icon: Target },
+    { value: 'strategy' as StatsCategory, label: '投資戦略', icon: Lightbulb },
     { value: 'trends' as StatsCategory, label: 'トレンド', icon: TrendingUp },
     { value: 'conditions' as StatsCategory, label: '条件別', icon: Target },
     { value: 'performance' as StatsCategory, label: '収支', icon: DollarSign },
@@ -266,6 +268,102 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
       )}
     </div>
   );
+
+  const renderInvestmentStrategy = () => {
+    if (!detailedStats) {
+      return (
+        <ResponsiveCard>
+          <div className="text-center py-8">
+            <Lightbulb className="mx-auto mb-4 text-gray-400" size={48} />
+            <h3 className="text-responsive-lg font-medium text-gray-600 mb-2">
+              投資戦略分析
+            </h3>
+            <p className="text-responsive-sm text-gray-500">
+              統計データが不足しています。<br/>
+              予想結果を入力すると戦略分析が利用できます。
+            </p>
+          </div>
+        </ResponsiveCard>
+      );
+    }
+
+    // 仮の予想データを作成（実際の実装では最新の予想を使用）
+    const mockPrediction = {
+      rankings: predictionHistory.length > 0 ? 
+        predictionHistory[0].predictions.slice(0, 3).map((pred, index) => ({
+          name: pred.horse?.name || `馬${index + 1}`,
+          number: pred.horse?.number || index + 1,
+          jockey: pred.horse?.jockey || `騎手${index + 1}`,
+          popularity: pred.horse?.popularity || index + 1,
+          odds: pred.horse?.odds || (3.0 + index),
+          confidence: 0.8 - (index * 0.1),
+          speedIndex: 80 - (index * 5),
+          recentForm: index === 0 ? 'excellent' : index === 1 ? 'good' : 'fair',
+          pastRaces: []
+        })) : [
+          { name: '予想馬1', number: 1, jockey: '騎手1', popularity: 1, odds: 3.0, confidence: 0.8, speedIndex: 80, recentForm: 'excellent', pastRaces: [] },
+          { name: '予想馬2', number: 2, jockey: '騎手2', popularity: 2, odds: 4.5, confidence: 0.7, speedIndex: 75, recentForm: 'good', pastRaces: [] },
+          { name: '予想馬3', number: 3, jockey: '騎手3', popularity: 3, odds: 6.0, confidence: 0.6, speedIndex: 70, recentForm: 'fair', pastRaces: [] }
+        ]
+    };
+
+    // 仮のオッズデータ
+    const mockOdds = {
+      'wide_1_2': 1.8,
+      'wide_1_3': 2.2,
+      'wide_2_3': 2.5,
+      'fukusho_1': 1.5,
+      'fukusho_2': 2.0,
+      'fukusho_3': 2.8,
+      'umaren_1_2': 8.5,
+      'umaren_1_3': 12.0,
+      'umatan_1_2': 15.0,
+      'sanrenpuku_1_2_3': 25.0
+    };
+
+    return (
+      <div className="space-y-6">
+        <ResponsiveCard>
+          <h3 className="text-responsive-lg font-semibold mb-4 flex items-center gap-2">
+            <Lightbulb size={20} />
+            統計に基づく投資戦略推奨
+          </h3>
+          
+          <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+            <h4 className="font-semibold text-blue-900 mb-2">現在の統計データ</h4>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-blue-700">3頭中1頭以上3着以内:</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.any1.rate * 100).toFixed(1)}%</span>
+              </div>
+              <div>
+                <span className="text-blue-700">3頭中2頭以上3着以内:</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.any2.rate * 100).toFixed(1)}%</span>
+              </div>
+              <div>
+                <span className="text-blue-700">3頭すべて3着以内:</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.all3.rate * 100).toFixed(1)}%</span>
+              </div>
+              <div>
+                <span className="text-blue-700">1位的中率:</span>
+                <span className="font-bold ml-2">{(detailedStats.hitPatterns.first.rate * 100).toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
+
+          <StrategyRecommendation
+            prediction={mockPrediction}
+            availableOdds={mockOdds}
+            onStrategySelect={(strategy) => {
+              console.log('選択された戦略:', strategy);
+              // 実際の実装では投資記録作成画面に遷移
+              alert(`${strategy.name}が選択されました。投資記録作成機能は開発中です。`);
+            }}
+          />
+        </ResponsiveCard>
+      </div>
+    );
+  };
 
   const renderTrends = () => (
     <div className="space-y-6">
@@ -498,6 +596,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
     switch (selectedCategory) {
       case 'overview': return renderOverview();
       case 'detailed': return renderDetailedStatistics();
+      case 'strategy': return renderInvestmentStrategy();
       case 'trends': return renderTrends();
       case 'conditions': return renderConditions();
       case 'performance': return renderPerformance();

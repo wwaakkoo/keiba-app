@@ -4,6 +4,7 @@ import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, ResponsiveGrid } from '@/components/common/ResponsiveContainer';
 import { HomeHeader } from '@/components/common/MobileHeader';
 import { PredictionEngine } from '@/components/prediction/PredictionEngine';
+import { EnhancedPredictionEngine } from '@/components/prediction/EnhancedPredictionEngine';
 
 interface HomeScreenProps {
   onCreateRace: () => void;
@@ -73,7 +74,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* 現在のレース予想エンジン */}
         {currentRace && currentRace.horses && currentRace.horses.length > 0 ? (
           <div className="mb-6">
-            <PredictionEngine
+            <EnhancedPredictionEngine
               race={currentRace}
               onViewInvestment={onViewInvestment}
               onPredictionSave={onPredictionSave}
