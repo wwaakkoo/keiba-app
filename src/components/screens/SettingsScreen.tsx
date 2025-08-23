@@ -1,7 +1,8 @@
-import React from 'react';
-import { ArrowLeft, Settings, Bell, Shield, Download, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Settings, Bell, Shield, Download, Trash2, Database } from 'lucide-react';
 import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
+import { DataExportImport } from '@/components/common/DataExportImport';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -10,6 +11,7 @@ interface SettingsScreenProps {
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onBack
 }) => {
+  const [showDataManager, setShowDataManager] = useState(false);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
@@ -55,45 +57,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             </h3>
             <div className="space-y-3">
               <TouchOptimizedButton
-                onClick={async () => {
-                  try {
-                    // データエクスポート機能の実装
-                    const { db } = await import('@/services/database');
-                    const stats = await db.getStats();
-                    
-                    const exportData = {
-                      exportDate: new Date().toISOString(),
-                      stats,
-                      races: await db.races.toArray(),
-                      predictions: await db.predictions.toArray(),
-                      investments: await db.investments.toArray(),
-                      settings: await db.settings.toArray()
-                    };
-                    
-                    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-                      type: 'application/json'
-                    });
-                    
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `keiba-data-${new Date().toISOString().split('T')[0]}.json`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    
-                    alert('データをエクスポートしました');
-                  } catch (error) {
-                    console.error('エクスポートエラー:', error);
-                    alert('エクスポートに失敗しました');
-                  }
-                }}
-                variant="secondary"
-                icon={Download}
+                onClick={() => setShowDataManager(true)}
+                variant="primary"
+                icon={Database}
                 fullWidth
               >
-                データをエクスポート
+                データのエクスポート・インポート
               </TouchOptimizedButton>
               <TouchOptimizedButton
                 onClick={async () => {
@@ -141,6 +110,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </ResponsiveCard>
         </div>
       </ResponsiveContainer>
+
+      {/* データ管理モーダル */}
+      {showDataManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DataExportImport onClose={() => setShowDataManager(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

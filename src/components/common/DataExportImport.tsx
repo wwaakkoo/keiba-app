@@ -27,6 +27,7 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
   const [isImporting, setIsImporting] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [exportStatus, setExportStatus] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -93,6 +94,54 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    await processImportFile(file);
+    
+    // ファイル入力をリセット
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  // ドラッグ&ドロップハンドラー
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type === 'application/json' || file.type === 'text/csv' || 
+          file.name.endsWith('.json') || file.name.endsWith('.csv')) {
+        await processImportFile(file);
+      } else {
+        alert('サポートされていないファイル形式です。JSON または CSV ファイルを選択してください。');
+      }
+    }
+  };
+
+  const processImportFile = async (file: File) => {
     try {
       setIsImporting(true);
       setImportResult(null);
@@ -110,15 +159,7 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
       });
     } finally {
       setIsImporting(false);
-      // ファイル入力をリセット
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     }
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
   };
 
   return (
@@ -354,7 +395,15 @@ export const DataExportImport: React.FC<DataExportImportProps> = ({
               <button
                 onClick={triggerFileInput}
                 disabled={isImporting}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors disabled:opacity-50"
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                className={`w-full flex items-center justify-center space-x-2 px-4 py-8 border-2 border-dashed rounded-lg text-gray-600 hover:text-gray-700 transition-colors disabled:opacity-50 ${
+                  isDragging 
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-300 hover:border-gray-400'
+                }`}
               >
                 {isImporting ? (
                   <>
