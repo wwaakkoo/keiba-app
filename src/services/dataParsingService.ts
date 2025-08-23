@@ -254,9 +254,9 @@ export const parseNetKeibaData = (text: string, addDebugLog?: (message: string, 
             if (i > 0) {
               const prevLine = lines[i - 1].trim();
               
-              // 騎手らしい条件：ひらがな・カタカナ・漢字で2-8文字
+              // 騎手らしい条件：ひらがな・カタカナ・漢字で2-8文字（より広範囲の漢字を含む）
               if (prevLine.length >= 2 && prevLine.length <= 8 &&
-                  prevLine.match(/^[ぁ-んァ-ヶー一-龯\s]+$/) &&
+                  prevLine.match(/^[ぁ-んァ-ヶー一-龯々\s]+$/) &&
                   !prevLine.includes('人気') &&
                   !prevLine.includes('着') &&
                   !prevLine.includes('頭') &&
@@ -265,7 +265,9 @@ export const parseNetKeibaData = (text: string, addDebugLog?: (message: string, 
                   !prevLine.includes('牝') &&
                   !prevLine.includes('牡') &&
                   !prevLine.includes('美浦') &&
-                  !prevLine.includes('栗東')) {
+                  !prevLine.includes('栗東') &&
+                  !prevLine.includes('歳') &&
+                  !prevLine.match(/^\d/)) {
                 
                 jockey = prevLine;
                 log(`✅ 騎手発見（斤量前）行${i-1}: "${jockey}" (斤量: ${currentLine})`);
@@ -629,10 +631,11 @@ const extractDebutantInfo = (lines: string[], log: (message: string, data?: any)
         if (i > 0) {
           const prevLine = lines[i - 1].trim();
           
-          // 騎手らしい条件
+          // 騎手らしい条件（より広範囲の漢字を含む）
           if (prevLine.length >= 2 && prevLine.length <= 8 &&
-              prevLine.match(/^[ぁ-んァ-ヶー一-龯\s]+$/) &&
-              !prevLine.includes('人気') && !prevLine.includes('着')) {
+              prevLine.match(/^[ぁ-んァ-ヶー一-龯々\s]+$/) &&
+              !prevLine.includes('人気') && !prevLine.includes('着') &&
+              !prevLine.includes('歳') && !prevLine.match(/^\d/)) {
             
             jockeyInfo = prevLine;
             log(`騎手検出: ${jockeyInfo}`);
@@ -642,17 +645,23 @@ const extractDebutantInfo = (lines: string[], log: (message: string, data?: any)
       }
     }
     
-    // 騎手評価の簡易計算
+    // 騎手評価の簡易計算（Sランク=5, Aランク=4, Bランク=3, Cランク=2）
     if (jockeyInfo) {
-      const topJockeys = ['戸崎', '川田', 'ルメール', '福永', 'デムーロ', '横山武', '岩田', '松山', '大野'];
-      const goodJockeys = ['菅原', '木幡育', '岩部', '内田博', '木幡巧', '石神', '石橋'];
+      const sRankJockeys = ['ルメール', '川田', '武豊'];
+      const aRankJockeys = ['戸崎', '横山武', '松山', '坂井', '横山和', '池添'];
+      const bRankJockeys = ['岩田康', '藤岡', '田辺', '三浦', '和田', '幸'];
+      const cRankJockeys = ['菅原', '団野', '西村', '鮫島', '菱田', '岩田望', '津村', '大野', '北村'];
       
-      if (topJockeys.some(name => jockeyInfo.includes(name))) {
+      if (sRankJockeys.some(name => jockeyInfo.includes(name))) {
         jockeyRating = 5;
-      } else if (goodJockeys.some(name => jockeyInfo.includes(name))) {
+      } else if (aRankJockeys.some(name => jockeyInfo.includes(name))) {
         jockeyRating = 4;
-      } else {
+      } else if (bRankJockeys.some(name => jockeyInfo.includes(name))) {
         jockeyRating = 3;
+      } else if (cRankJockeys.some(name => jockeyInfo.includes(name))) {
+        jockeyRating = 2;
+      } else {
+        jockeyRating = 1; // 未分類騎手
       }
       log(`騎手評価: ${jockeyRating} (${jockeyInfo})`);
     }
