@@ -311,6 +311,7 @@ function App() {
         return (
           <StatisticsView
             onBack={handleBackToHome}
+            onNavigateToHome={handleBackToHome}
             predictionHistory={predictionHistory}
             accuracyStats={accuracyStats}
             trendData={trendData}
@@ -337,6 +338,7 @@ function App() {
         return (
           <HistoryScreen
             onBack={handleBackToHome}
+            onNavigateToHome={handleBackToHome}
           />
         );
       
