@@ -286,8 +286,23 @@ export class DataExportService {
                 const normalizedRaceData = {
                   ...raceData,
                   createdAt: raceData.createdAt ? new Date(raceData.createdAt) : new Date(),
-                  updatedAt: raceData.updatedAt ? new Date(raceData.updatedAt) : new Date()
+                  updatedAt: raceData.updatedAt ? new Date(raceData.updatedAt) : new Date(),
+                  // 日付を正規化
+                  date: raceData.date ? (typeof raceData.date === 'string' ? raceData.date : new Date(raceData.date).toISOString().split('T')[0]) : new Date().toISOString().split('T')[0],
+                  // レース詳細情報の必須フィールドを明示的に設定
+                  venue: raceData.venue || '不明',
+                  raceNumber: raceData.raceNumber || 1,
+                  distance: raceData.distance || 1200,
+                  surface: raceData.surface || 'turf',
+                  condition: raceData.condition || 'good',
+                  horses: raceData.horses || [],
+                  // オプショナルフィールド
+                  grade: raceData.grade || undefined,
+                  prizeMoney: raceData.prizeMoney || undefined,
+                  weather: raceData.weather || undefined
                 };
+                
+                console.log('レース作成データ:', normalizedRaceData);
                 await raceRepository.create(normalizedRaceData);
                 result.importedItems.races++;
               }
@@ -581,7 +596,14 @@ export class DataExportService {
         // その他の必須フィールドを確保
         venue: race.venue || '不明',
         raceNumber: race.raceNumber || 1,
-        horses: race.horses || []
+        horses: race.horses || [],
+        // レース詳細情報の必須フィールドを設定
+        distance: race.distance || 1200, // デフォルト距離
+        surface: race.surface || 'turf', // デフォルト芝
+        condition: race.condition || 'good', // デフォルト良馬場
+        grade: race.grade || undefined,
+        prizeMoney: race.prizeMoney || undefined,
+        weather: race.weather || undefined
       }));
     }
 
