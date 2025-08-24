@@ -251,7 +251,11 @@ export class DataExportService {
 
       // ファイル形式の判定と解析
       if (file.type === 'application/json' || file.name.endsWith('.json')) {
-        importData = JSON.parse(fileContent);
+        try {
+          importData = JSON.parse(fileContent);
+        } catch (parseError) {
+          throw new Error('JSONファイルの解析に失敗しました。ファイル形式を確認してください。');
+        }
       } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
         // CSV形式の場合は投資記録として扱う
         return await this.importInvestmentsFromCSV(fileContent);
@@ -259,10 +263,14 @@ export class DataExportService {
         throw new Error('サポートされていないファイル形式です');
       }
 
-      // データの検証
+      // データの検証と正規化
       if (!this.validateImportData(importData)) {
-        throw new Error('無効なデータ形式です');
+        throw new Error('無効なデータ形式です。エクスポートされた正しいJSONファイルを選択してください。');
       }
+
+      // データの正規化（古い形式のデータを新しい形式に変換）
+      importData = this.normalizeImportData(importData);
+      console.log('正規化されたインポートデータ:', importData);
 
       // トランザクション内でインポート実行
       await db.transaction('rw', db.races, db.predictions, db.investments, db.settings, async () => {
@@ -274,11 +282,18 @@ export class DataExportService {
               if (existingRace) {
                 result.warnings.push(`レース ${raceData.id} は既に存在します（スキップ）`);
               } else {
-                await raceRepository.create(raceData);
+                // 必須フィールドの確認と設定
+                const normalizedRaceData = {
+                  ...raceData,
+                  createdAt: raceData.createdAt ? new Date(raceData.createdAt) : new Date(),
+                  updatedAt: raceData.updatedAt ? new Date(raceData.updatedAt) : new Date()
+                };
+                await raceRepository.create(normalizedRaceData);
                 result.importedItems.races++;
               }
             } catch (error) {
-              result.errors.push(`レース ${raceData.id} のインポートに失敗: ${error}`);
+              console.error('レースインポートエラー詳細:', error);
+              result.errors.push(`レース ${raceData.id || '不明'} のインポートに失敗: ${error instanceof Error ? error.message : '不明なエラー'}`);
             }
           }
         }
@@ -291,11 +306,29 @@ export class DataExportService {
               if (existingPrediction) {
                 result.warnings.push(`予想 ${predictionData.id} は既に存在します（スキップ）`);
               } else {
-                await predictionRepository.save(predictionData);
+                // 新しいスキーマに適合するよう正規化
+                const normalizedPredictionData = {
+                  ...predictionData,
+                  timestamp: predictionData.timestamp ? new Date(predictionData.timestamp) : new Date(),
+                  workflowStatus: predictionData.workflowStatus || (predictionData.isResultEntered ? 'prediction_result_entered' : 'prediction_only'),
+                  relatedInvestmentIds: predictionData.relatedInvestmentIds || []
+                };
+                
+                // IDを除去してsaveメソッドに渡す
+                const { id, ...dataWithoutId } = normalizedPredictionData;
+                const newId = await predictionRepository.save(dataWithoutId);
+                
+                // 元のIDで更新（IDの整合性を保つため）
+                if (id && id !== newId) {
+                  await db.predictions.delete(newId);
+                  await db.predictions.put({ ...normalizedPredictionData, id });
+                }
+                
                 result.importedItems.predictions++;
               }
             } catch (error) {
-              result.errors.push(`予想 ${predictionData.id} のインポートに失敗: ${error}`);
+              console.error('予想インポートエラー詳細:', error);
+              result.errors.push(`予想 ${predictionData.id || '不明'} のインポートに失敗: ${error instanceof Error ? error.message : '不明なエラー'}`);
             }
           }
         }
@@ -308,11 +341,19 @@ export class DataExportService {
               if (existingInvestment) {
                 result.warnings.push(`投資記録 ${investmentData.id} は既に存在します（スキップ）`);
               } else {
-                await investmentRepository.record(investmentData);
+                // 新しいスキーマに適合するよう正規化
+                const normalizedInvestmentData = {
+                  ...investmentData,
+                  timestamp: investmentData.timestamp ? new Date(investmentData.timestamp) : new Date(),
+                  isResultConfirmed: investmentData.isResultConfirmed || false,
+                  resultEnteredAt: investmentData.resultEnteredAt ? new Date(investmentData.resultEnteredAt) : undefined
+                };
+                await investmentRepository.record(normalizedInvestmentData);
                 result.importedItems.investments++;
               }
             } catch (error) {
-              result.errors.push(`投資記録 ${investmentData.id} のインポートに失敗: ${error}`);
+              console.error('投資インポートエラー詳細:', error);
+              result.errors.push(`投資記録 ${investmentData.id || '不明'} のインポートに失敗: ${error instanceof Error ? error.message : '不明なエラー'}`);
             }
           }
         }
@@ -321,22 +362,75 @@ export class DataExportService {
         if (importData.settings && Array.isArray(importData.settings)) {
           for (const settingData of importData.settings) {
             try {
-              await db.settings.put(settingData);
+              // 設定データを正規化
+              const normalizedSettingData = {
+                ...settingData,
+                createdAt: settingData.createdAt ? new Date(settingData.createdAt) : new Date(),
+                updatedAt: new Date(), // インポート時は現在時刻に更新
+                // デフォルト値の確保
+                theme: settingData.theme || 'auto',
+                notifications: settingData.notifications !== undefined ? settingData.notifications : true,
+                autoSync: settingData.autoSync !== undefined ? settingData.autoSync : true,
+                defaultBetAmount: settingData.defaultBetAmount || 1000,
+                riskLevel: settingData.riskLevel || 'moderate',
+                predictionWeights: settingData.predictionWeights || { speed: 0.4, recent: 0.4, odds: 0.2 },
+                investmentLimits: settingData.investmentLimits || {
+                  dailyLimit: 10000,
+                  weeklyLimit: 50000,
+                  monthlyLimit: 200000,
+                  maxBetAmount: 5000
+                }
+              };
+              
+              await db.settings.put(normalizedSettingData);
               result.importedItems.settings++;
             } catch (error) {
-              result.errors.push(`設定データのインポートに失敗: ${error}`);
+              console.error('設定インポートエラー詳細:', error);
+              result.errors.push(`設定データのインポートに失敗: ${error instanceof Error ? error.message : '不明なエラー'}`);
             }
           }
         }
       });
 
+      // インポート後の検証と警告
+      const totalImported = result.importedItems.races + result.importedItems.predictions + 
+                           result.importedItems.investments + result.importedItems.settings;
+      
+      if (totalImported === 0 && result.warnings.length === 0) {
+        result.warnings.push('インポート可能な新しいデータが見つかりませんでした。すべてのデータが既に存在している可能性があります。');
+      }
+
       result.success = result.errors.length === 0;
-      console.log('データインポート完了:', result);
+      
+      console.log('データインポート完了:', {
+        success: result.success,
+        importedItems: result.importedItems,
+        totalImported,
+        errorCount: result.errors.length,
+        warningCount: result.warnings.length
+      });
+      
+      // 成功した場合の追加メッセージ
+      if (result.success && totalImported > 0) {
+        result.warnings.unshift(`合計 ${totalImported} 件のデータが正常にインポートされました。`);
+      }
       
       return result;
     } catch (error) {
-      console.error('データインポートエラー:', error);
-      result.errors.push(error instanceof Error ? error.message : '不明なエラー');
+      console.error('データインポート致命的エラー:', error);
+      
+      // より詳細なエラー情報を追加
+      if (error instanceof Error) {
+        result.errors.push(`インポート処理中に致命的なエラーが発生しました: ${error.message}`);
+        
+        // スタックトレースがある場合は詳細をコンソールに出力
+        if (error.stack) {
+          console.error('エラーのスタックトレース:', error.stack);
+        }
+      } else {
+        result.errors.push('データインポート中に不明なエラーが発生しました');
+      }
+      
       return result;
     }
   }
@@ -431,6 +525,90 @@ export class DataExportService {
       data.settings;
 
     return !!validStructure;
+  }
+
+  // インポートデータの正規化（古い形式から新しい形式への変換）
+  private normalizeImportData(data: any): any {
+    const normalizedData = { ...data };
+
+    // 予想データの正規化
+    if (normalizedData.predictions && Array.isArray(normalizedData.predictions)) {
+      normalizedData.predictions = normalizedData.predictions.map((prediction: any) => ({
+        ...prediction,
+        // 新しいワークフロー関連フィールドを追加
+        workflowStatus: prediction.workflowStatus || 
+          (prediction.isResultEntered ? 'prediction_result_entered' : 'prediction_only'),
+        relatedInvestmentIds: prediction.relatedInvestmentIds || [],
+        // タイムスタンプを正規化
+        timestamp: prediction.timestamp ? new Date(prediction.timestamp) : new Date(),
+        // その他の互換性確保
+        predictions: prediction.predictions || [],
+        confidence: prediction.confidence || 0,
+        accuracy: prediction.accuracy || null,
+        actualRanking: prediction.actualRanking || null,
+        isCorrect: prediction.isCorrect || false
+      }));
+    }
+
+    // 投資データの正規化
+    if (normalizedData.investments && Array.isArray(normalizedData.investments)) {
+      normalizedData.investments = normalizedData.investments.map((investment: any) => ({
+        ...investment,
+        // 新しい結果確認関連フィールドを追加
+        isResultConfirmed: investment.isResultConfirmed || false,
+        resultEnteredAt: investment.resultEnteredAt ? new Date(investment.resultEnteredAt) : undefined,
+        // タイムスタンプを正規化
+        timestamp: investment.timestamp ? new Date(investment.timestamp) : new Date(),
+        // その他の互換性確保
+        betType: investment.betType || 'win',
+        selections: investment.selections || [1],
+        amount: investment.amount || 0,
+        odds: investment.odds || 0,
+        payout: investment.payout || 0,
+        profit: investment.profit || 0
+      }));
+    }
+
+    // レースデータの正規化
+    if (normalizedData.races && Array.isArray(normalizedData.races)) {
+      normalizedData.races = normalizedData.races.map((race: any) => ({
+        ...race,
+        // 作成・更新日時を正規化
+        createdAt: race.createdAt ? new Date(race.createdAt) : new Date(),
+        updatedAt: race.updatedAt ? new Date(race.updatedAt) : new Date(),
+        // 日付フィールドを正規化
+        date: race.date ? (typeof race.date === 'string' ? race.date : new Date(race.date).toISOString().split('T')[0]) : new Date().toISOString().split('T')[0],
+        // その他の必須フィールドを確保
+        venue: race.venue || '不明',
+        raceNumber: race.raceNumber || 1,
+        horses: race.horses || []
+      }));
+    }
+
+    // 設定データの正規化
+    if (normalizedData.settings && Array.isArray(normalizedData.settings)) {
+      normalizedData.settings = normalizedData.settings.map((setting: any) => ({
+        ...setting,
+        // 作成・更新日時を正規化
+        createdAt: setting.createdAt ? new Date(setting.createdAt) : new Date(),
+        updatedAt: setting.updatedAt ? new Date(setting.updatedAt) : new Date(),
+        // デフォルト値を設定
+        theme: setting.theme || 'auto',
+        notifications: setting.notifications !== undefined ? setting.notifications : true,
+        autoSync: setting.autoSync !== undefined ? setting.autoSync : true,
+        defaultBetAmount: setting.defaultBetAmount || 1000,
+        riskLevel: setting.riskLevel || 'moderate',
+        predictionWeights: setting.predictionWeights || { speed: 0.4, recent: 0.4, odds: 0.2 },
+        investmentLimits: setting.investmentLimits || {
+          dailyLimit: 10000,
+          weeklyLimit: 50000,
+          monthlyLimit: 200000,
+          maxBetAmount: 5000
+        }
+      }));
+    }
+
+    return normalizedData;
   }
 
   // ファイルダウンロードのヘルパー
