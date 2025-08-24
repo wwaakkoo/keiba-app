@@ -66,6 +66,17 @@ export const useDataManager = () => {
           const race = races.find(r => r.id === prediction.raceId);
           const raceInvestments = investments.filter(inv => inv.predictionId === prediction.id);
           
+          // デバッグ: レースデータが見つからない場合のログ
+          if (!race) {
+            console.warn(`予想 ${prediction.id} に対応するレース ${prediction.raceId} が見つかりません`);
+          } else if (!race.venue || race.venue === '不明') {
+            console.warn(`レース ${prediction.raceId} の競馬場情報が不足しています:`, {
+              venue: race.venue,
+              distance: race.distance,
+              surface: race.surface
+            });
+          }
+          
           const totalInvestment = raceInvestments.reduce((sum, inv) => sum + inv.amount, 0);
           const totalReturn = raceInvestments.reduce((sum, inv) => sum + inv.payout, 0);
 
@@ -73,9 +84,9 @@ export const useDataManager = () => {
             id: prediction.id,
             date: prediction.timestamp.toISOString(),
             race: {
-              venue: race?.venue || '未設定',
-              raceNumber: race?.raceNumber || 0,
-              distance: race?.distance || 0,
+              venue: race?.venue && race.venue !== '不明' ? race.venue : 'データ不足',
+              raceNumber: race?.raceNumber || 1,
+              distance: race?.distance || 1200,
               surface: race?.surface || 'turf',
               raceDate: race?.date || ''
             },
