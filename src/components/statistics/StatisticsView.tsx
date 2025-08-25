@@ -149,7 +149,14 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
       },
       predictions: entry.predictions,
       horseCount: entry.horseCount,
-      confidenceLevel: entry.confidenceLevel || null,
+      confidenceLevel: typeof entry.confidenceLevel === 'number' 
+        ? {
+            overall: 'medium' as const,
+            topPick: entry.confidenceLevel * 100,
+            spread: 10,
+            dataQuality: 'good' as const
+          } 
+        : entry.confidenceLevel || null,
       actualResults: entry.actualResults || null,
       payoutData: entry.payoutData ? {
         investment: entry.payoutData.investment,
