@@ -64,6 +64,9 @@ export const PopularityAnalysisChart = memo<PopularityAnalysisChartProps>(({
   rankData,
   className = "" 
 }) => {
+  // データの有効性をチェック
+  const hasData = popularityData.length > 0 || oddsData.length > 0 || rankData.length > 0;
+
   // 全体統計の計算
   const totalStats = React.useMemo(() => {
     const totalPredictions = popularityData.reduce((sum, item) => sum + item.totalPredictions, 0);
@@ -79,6 +82,21 @@ export const PopularityAnalysisChart = memo<PopularityAnalysisChartProps>(({
       totalProfit: totalPayout - totalInvestment
     };
   }, [popularityData]);
+
+  // データがない場合の表示
+  if (!hasData) {
+    return (
+      <ResponsiveCard className="p-8 text-center">
+        <div className="mb-4">
+          <Target className="mx-auto h-12 w-12 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">人気・オッズ分析データなし</h3>
+        <p className="text-gray-500">
+          予想結果と投資データが蓄積されると、ここに人気・オッズ別のパフォーマンス分析が表示されます。
+        </p>
+      </ResponsiveCard>
+    );
+  }
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -117,9 +135,11 @@ export const PopularityAnalysisChart = memo<PopularityAnalysisChartProps>(({
       {/* 人気別分析 */}
       <ResponsiveCard className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">人気別パフォーマンス</h3>
-        <div className="h-80 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={popularityData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        {popularityData.length > 0 ? (
+          <>
+            <div className="h-80 mb-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={popularityData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="range" />
               <YAxis yAxisId="left" orientation="left" />
@@ -205,14 +225,22 @@ export const PopularityAnalysisChart = memo<PopularityAnalysisChartProps>(({
             </tbody>
           </table>
         </div>
+          </>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <p>人気別データがありません</p>
+          </div>
+        )}
       </ResponsiveCard>
 
       {/* オッズ別分析 */}
       <ResponsiveCard className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">オッズ別パフォーマンス</h3>
-        <div className="h-80 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={oddsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        {oddsData.length > 0 ? (
+          <>
+            <div className="h-80 mb-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={oddsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="range" />
               <YAxis yAxisId="left" orientation="left" />
@@ -298,14 +326,22 @@ export const PopularityAnalysisChart = memo<PopularityAnalysisChartProps>(({
             </tbody>
           </table>
         </div>
+          </>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <p>オッズ別データがありません</p>
+          </div>
+        )}
       </ResponsiveCard>
 
       {/* 予想順位別分析 */}
       <ResponsiveCard className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">予想順位別パフォーマンス</h3>
-        <div className="h-80 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rankData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        {rankData.length > 0 ? (
+          <>
+            <div className="h-80 mb-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={rankData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="rank" />
               <YAxis yAxisId="left" orientation="left" />
@@ -360,6 +396,12 @@ export const PopularityAnalysisChart = memo<PopularityAnalysisChartProps>(({
             </div>
           ))}
         </div>
+          </>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <p>予想順位別データがありません</p>
+          </div>
+        )}
       </ResponsiveCard>
     </div>
   );

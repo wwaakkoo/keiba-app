@@ -107,7 +107,12 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
 
   // 分析データの計算（メモ化）
   const analysisData = useMemo(() => {
-    if (investments.length === 0 || predictionHistory.length === 0) {
+    // 基本的な分析には予想履歴が必要
+    const hasBasicData = predictionHistory.length > 0;
+    const hasInvestmentData = investments.length > 0;
+    const hasFullData = hasBasicData && hasInvestmentData;
+
+    if (!hasBasicData) {
       return {
         roiAnalysis: null,
         hitPatterns: null,
@@ -120,36 +125,54 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
       };
     }
 
-    // ROI分析
-    const roiData = performanceAnalysisService.analyzeROI(predictionHistory as any[], investments);
-    
-    // 的中パターン分析
-    const patternData = performanceAnalysisService.analyzeHitPatterns(predictionHistory as any[], investments);
-    
-    // パフォーマンス指標
-    const metricsData = investmentPerformanceService.calculatePerformance(investments);
-    
-    // 改善提案
-    const suggestionData = performanceAnalysisService.generateImprovementSuggestions(
-      roiData,
-      patternData,
-      metricsData
-    );
-    
-    // トレンド分析
-    const trendData = detailedAnalysisService.analyzeTrends(predictionHistory as any[], investments);
+    // 投資データが必要な分析
+    const roiData = hasFullData ? performanceAnalysisService.analyzeROI(predictionHistory as any[], investments) : null;
+    const patternData = hasFullData ? performanceAnalysisService.analyzeHitPatterns(predictionHistory as any[], investments) : null;
+    const metricsData = hasInvestmentData ? investmentPerformanceService.calculatePerformance(investments) : null;
+    const suggestionData = hasFullData && roiData && patternData && metricsData ? 
+      performanceAnalysisService.generateImprovementSuggestions(roiData, patternData, metricsData) : [];
+    const trendData = hasFullData ? detailedAnalysisService.analyzeTrends(predictionHistory as any[], investments) : null;
 
-    // 人気分析データ
+    // 人気・オッズ分析は予想データがあれば実行（投資データは空配列でも可）
+    // PredictionHistoryEntryをPredictionResultに変換
+    const convertedPredictions: PredictionResult[] = predictionHistory.map(entry => ({
+      id: entry.id,
+      raceId: entry.id, // 仮のraceId
+      timestamp: new Date(entry.date),
+      date: entry.date,
+      race: {
+        venue: entry.race.venue,
+        raceNumber: entry.race.raceNumber,
+        distance: entry.race.distance,
+        surface: entry.race.surface as 'turf' | 'dirt',
+        raceDate: entry.race.raceDate
+      },
+      predictions: entry.predictions,
+      horseCount: entry.horseCount,
+      confidenceLevel: entry.confidenceLevel || null,
+      actualResults: entry.actualResults || null,
+      payoutData: entry.payoutData ? {
+        investment: entry.payoutData.investment,
+        totalReturn: entry.payoutData.totalReturn,
+        profit: entry.payoutData.totalReturn - entry.payoutData.investment,
+        betType: 'win' as const,
+        selections: [],
+        odds: 0
+      } : null,
+      isResultEntered: entry.isResultEntered,
+      actualRanking: entry.actualResults?.map(r => r.number) || undefined
+    }));
+
     const popularityData = popularityAnalysisService.analyzeByPopularity(
-      predictionHistory as unknown as PredictionResult[],
+      convertedPredictions,
       investments
     );
     const oddsData = popularityAnalysisService.analyzeByOdds(
-      predictionHistory as unknown as PredictionResult[],
+      convertedPredictions,
       investments
     );
     const rankData = popularityAnalysisService.analyzeByPredictionRank(
-      predictionHistory as unknown as PredictionResult[],
+      convertedPredictions,
       investments
     );
 
@@ -634,20 +657,21 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   };
 
   const renderPopularityAnalysis = () => {
-    if (!currentPopularityAnalysis || !currentOddsAnalysis || !currentRankAnalysis) {
+    // 予想履歴があれば分析を実行（分析結果が空でも表示）
+    if (predictionHistory.length === 0) {
       return (
         <ResponsiveCard className="p-8 text-center">
           <p className="text-gray-600">人気・オッズ分析を行うためのデータが不足しています。</p>
-          <p className="text-sm text-gray-500 mt-2">予想と投資の実績データを蓄積してください。</p>
+          <p className="text-sm text-gray-500 mt-2">予想結果を入力してください。</p>
         </ResponsiveCard>
       );
     }
 
     return (
       <PopularityAnalysisChart
-        popularityData={currentPopularityAnalysis}
-        oddsData={currentOddsAnalysis}
-        rankData={currentRankAnalysis}
+        popularityData={currentPopularityAnalysis || []}
+        oddsData={currentOddsAnalysis || []}
+        rankData={currentRankAnalysis || []}
       />
     );
   };
@@ -655,6 +679,7 @@ const StatisticsViewComponent: React.FC<StatisticsViewProps> = ({
   return (
     <div className="min-h-screen bg-gray-50">
       <BackHeaderWithHome title="統計分析" onBack={onBack} onHome={onNavigateToHome || (() => {})} />
+      
       
       <ResponsiveContainer maxWidth="mobile" padding="md">
         {/* 期間選択 */}

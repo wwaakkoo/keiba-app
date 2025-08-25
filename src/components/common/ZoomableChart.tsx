@@ -128,7 +128,6 @@ export const ZoomableChart: React.FC<ZoomableChartProps> = ({
           transformOrigin: 'center center',
           transition: isPanning ? 'none' : 'transform 0.2s ease-out'
         }}
-        {...pinchGesture}
         onTouchStart={(e) => {
           pinchGesture.onTouchStart(e);
           if (e.touches.length === 1) {

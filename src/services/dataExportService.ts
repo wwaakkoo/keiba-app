@@ -270,7 +270,6 @@ export class DataExportService {
 
       // データの正規化（古い形式のデータを新しい形式に変換）
       importData = this.normalizeImportData(importData);
-      console.log('正規化されたインポートデータ:', importData);
 
       // トランザクション内でインポート実行
       await db.transaction('rw', db.races, db.predictions, db.investments, db.settings, async () => {
@@ -302,8 +301,8 @@ export class DataExportService {
                   weather: raceData.weather || undefined
                 };
                 
-                console.log('レース作成データ:', normalizedRaceData);
-                await raceRepository.create(normalizedRaceData);
+                // 元のIDを保持してダイレクトにDBに挿入
+                await db.races.put({ ...normalizedRaceData, id: raceData.id });
                 result.importedItems.races++;
               }
             } catch (error) {

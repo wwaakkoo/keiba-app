@@ -4,6 +4,7 @@ import { TouchOptimizedButton } from '@/components/common/TouchOptimizedButton';
 import { ResponsiveContainer, ResponsiveCard, FlexLayout } from '@/components/common/ResponsiveContainer';
 import { DataExportImport } from '@/components/common/DataExportImport';
 import { dataMigrationService } from '@/services/dataMigration';
+import { useDataManager } from '@/hooks/useDataManager';
 
 interface SettingsScreenProps {
   onBack: () => void;
@@ -12,9 +13,12 @@ interface SettingsScreenProps {
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onBack
 }) => {
+  const { cleanOrphanedData } = useDataManager();
   const [showDataManager, setShowDataManager] = useState(false);
   const [isFixingData, setIsFixingData] = useState(false);
+  const [isCleaningData, setIsCleaningData] = useState(false);
   const [fixResult, setFixResult] = useState<string | null>(null);
+  const [cleanupResult, setCleanupResult] = useState<string | null>(null);
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
@@ -107,6 +111,57 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     <span className="text-sm font-medium text-green-800">修正完了</span>
                   </div>
                   <pre className="text-xs text-green-700 whitespace-pre-wrap">{fixResult}</pre>
+                </div>
+              )}
+
+              <TouchOptimizedButton
+                onClick={async () => {
+                  if (confirm('孤立したデータのクリーンアップを実行しますか？\n\n対応するレースが存在しない予想データを削除します。')) {
+                    setIsCleaningData(true);
+                    setCleanupResult(null);
+                    try {
+                      const deletedCount = await cleanOrphanedData();
+                      if (deletedCount > 0) {
+                        setCleanupResult(`${deletedCount}件の孤立した予想データを削除しました。`);
+                        alert(`クリーンアップが完了しました！\n\n${deletedCount}件の孤立した予想データを削除しました。`);
+                      } else if (deletedCount === 0) {
+                        setCleanupResult('クリーンアップの必要なデータは見つかりませんでした。');
+                        alert('クリーンアップは完了しています。\n\n削除対象のデータは見つかりませんでした。');
+                      } else {
+                        setCleanupResult('クリーンアップ中にエラーが発生しました。');
+                        alert('クリーンアップ中にエラーが発生しました。');
+                      }
+                    } catch (error) {
+                      console.error('データクリーンアップエラー:', error);
+                      setCleanupResult('クリーンアップ中にエラーが発生しました。');
+                      alert('データクリーンアップに失敗しました。\n\nエラー: ' + (error as Error).message);
+                    } finally {
+                      setIsCleaningData(false);
+                    }
+                  }
+                }}
+                variant="secondary"
+                icon={isCleaningData ? undefined : Trash2}
+                fullWidth
+                disabled={isCleaningData}
+              >
+                {isCleaningData ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <span>データをクリーンアップ中...</span>
+                  </div>
+                ) : (
+                  '孤立データのクリーンアップ'
+                )}
+              </TouchOptimizedButton>
+              
+              {cleanupResult && (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle className="text-green-600" size={16} />
+                    <span className="text-sm font-medium text-green-800">クリーンアップ完了</span>
+                  </div>
+                  <span className="text-xs text-green-700">{cleanupResult}</span>
                 </div>
               )}
               <TouchOptimizedButton

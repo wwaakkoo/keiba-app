@@ -61,15 +61,19 @@ export const useDataManager = () => {
       const races = await raceRepository.getAll();
       const investments = await investmentRepository.getRecentInvestments(50);
 
-      const historyEntries: PredictionHistoryEntry[] = await Promise.all(
+
+      const historyEntries: PredictionHistoryEntry[] = (await Promise.all(
         predictions.map(async (prediction) => {
           const race = races.find(r => r.id === prediction.raceId);
           const raceInvestments = investments.filter(inv => inv.predictionId === prediction.id);
           
-          // デバッグ: レースデータが見つからない場合のログ
+          // レースデータが見つからない場合は除外
           if (!race) {
-            console.warn(`予想 ${prediction.id} に対応するレース ${prediction.raceId} が見つかりません`);
-          } else if (!race.venue || race.venue === '不明') {
+            console.warn(`予想 ${prediction.id} に対応するレース ${prediction.raceId} が見つからないため除外します`);
+            return null; // nullを返して後でフィルタリング
+          }
+          
+          if (!race.venue || race.venue === '不明') {
             console.warn(`レース ${prediction.raceId} の競馬場情報が不足しています:`, {
               venue: race.venue,
               distance: race.distance,
@@ -103,9 +107,10 @@ export const useDataManager = () => {
             isResultEntered: !!prediction.actualRanking
           };
         })
-      );
+      )).filter(Boolean) as PredictionHistoryEntry[]; // nullを除外
 
       setPredictionHistory(historyEntries);
+      setInvestments(investments);
     } catch (err) {
       console.error('データ読み込みエラー:', err);
       setError('データの読み込みに失敗しました');
@@ -113,6 +118,38 @@ export const useDataManager = () => {
       setIsLoading(false);
     }
   }, []);
+
+  // データ整合性チェック・クリーンアップ機能
+  const cleanOrphanedData = useCallback(async () => {
+    try {
+      const predictions = await predictionRepository.getHistory(1000); // より多くのデータを取得
+      const races = await raceRepository.getAll();
+      const raceIds = new Set(races.map(r => r.id));
+      
+      // 孤立した予想データを特定
+      const orphanedPredictions = predictions.filter(pred => !raceIds.has(pred.raceId));
+      
+      if (orphanedPredictions.length > 0) {
+        console.log(`${orphanedPredictions.length}件の孤立した予想データを削除します...`);
+        
+        // 孤立した予想データを削除
+        await Promise.all(
+          orphanedPredictions.map(pred => predictionRepository.delete(pred.id))
+        );
+        
+        // データを再読み込み
+        await loadData();
+        
+        console.log('データクリーンアップが完了しました');
+        return orphanedPredictions.length;
+      }
+      
+      return 0;
+    } catch (err) {
+      console.error('データクリーンアップエラー:', err);
+      return -1;
+    }
+  }, [loadData]);
 
   // 初期データ読み込み
   useEffect(() => {
@@ -644,8 +681,16 @@ export const useDataManager = () => {
     return strategies;
   }, [predictionHistory]);
   
+  const [investments, setInvestments] = useState<Investment[]>([]);
+
+  // 初期化時のデータ読み込み
+  useEffect(() => {
+    loadData();
+  }, []); // 空の依存配列で一度だけ実行
+
   return {
     predictionHistory,
+    investments,
     savePredictionResult,
     saveActualResults,
     calculateAccuracy,
@@ -654,6 +699,7 @@ export const useDataManager = () => {
     calculatePeriodStats,
     calculateConditionStats,
     loadData,
+    cleanOrphanedData,
     isLoading,
     error,
     

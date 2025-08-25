@@ -106,6 +106,7 @@ function App() {
   // データ管理フックを使用
   const { 
     predictionHistory, 
+    investments,
     loadData,
     calculateAccuracyLegacy,
     calculateTrendData,
@@ -350,6 +351,7 @@ function App() {
             onBack={handleBackToHome}
             onNavigateToHome={handleBackToHome}
             predictionHistory={predictionHistory}
+            investments={investments}
             accuracyStats={accuracyStats}
             trendData={trendData}
             periodStats={periodStats}
